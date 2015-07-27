@@ -1,0 +1,18 @@
+PODS:
+  - ReactiveCocoa (2.1.8):
+    - ReactiveCocoa/Core (= 2.1.8)
+    - ReactiveCocoa/no-arc (= 2.1.8)
+  - ReactiveCocoa/Core (2.1.8):
+    - ReactiveCocoa/no-arc
+  - ReactiveCocoa/no-arc (2.1.8)
+  - VK-ios-sdk (1.1.12)
+
+DEPENDENCIES:
+  - ReactiveCocoa (= 2.1.8)
+  - VK-ios-sdk (~> 1.1)
+
+SPEC CHECKSUMS:
+  ReactiveCocoa: f89f2e009a87951b50321bf9feb958823fcc617e
+  VK-ios-sdk: 53e366d221b24cc0ef6f31c6e9dfae5f12eea054
+
+COCOAPODS: 0.38.0

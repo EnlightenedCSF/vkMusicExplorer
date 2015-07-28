@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "__45-[GroupContentViewController viewWillAppear:]_block_invoke_2:GroupContentViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__45-[GroupContentViewController viewWillAppear:]_block_invoke:GroupContentViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[GroupContentViewController parsePlaylist:andAddTo:]:GroupContentViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "json">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[GroupContentViewController collectionView:cellForItemAtIndexPath:]:GroupContentViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "GLOBAL">
+         <PersistentStrings>
+            <PersistentString
+               value = "group.domain">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[GroupContentViewController fetchAllSources]:GroupContentViewController.m">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

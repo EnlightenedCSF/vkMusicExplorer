@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 EnlightenedCSF. All rights reserved.
 //
 
+#import <SDWebImage/UIImageView+WebCache.h>
+
 #import "GroupSelectionTableViewCell.h"
 
 @interface GroupSelectionTableViewCell ()
@@ -18,20 +20,11 @@
 
 @implementation GroupSelectionTableViewCell
 
-- (void)awakeFromNib {
-    [self.isSelectedSwitch setOn:NO];
-}
-
 -(void)fillWithName:(NSString *)name andImageUrlString:(NSString *)url
 {
-    self.icon.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:url]]];
+    [self.isSelectedSwitch setOn:NO];
+    [self.icon sd_setImageWithURL:[NSURL URLWithString:url]];
     self.groupNameLabel.text = name;
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
 }
 
 @end

@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 
+#import <MagicalRecord.h>
 #import <VKSdk.h>
 
 @interface AppDelegate ()
@@ -25,6 +26,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [MagicalRecord setupCoreDataStackWithStoreNamed:@"VKTest"];
+    
+//    NSString *controllerName = [[NSUserDefaults standardUserDefaults] boolForKey:@"hasAlreadyChosenGroups"] ? @"contentVC" : @"sourceChoosingVC";
+//    self.window.rootViewController = [[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:controllerName];
+    
     return YES;
 }
 

@@ -10,7 +10,11 @@
 #import "GroupSelectionTableViewCell.h"
 #import "GroupContentViewController.h"
 
+#import "SourceGroup.h"
+
 #import <VKSdk.h>
+#import <MagicalRecord.h>
+#define MR_SHORTHAND
 
 @interface GroupSelectionViewController () <UITableViewDataSource, UITableViewDelegate, VKSdkDelegate>
 
@@ -98,6 +102,11 @@
     return cell;
 }
 
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+}
+
 #pragma mark - Controls
 
 - (IBAction)groupSelectionSwitchValueChanged:(UISwitch *)sender {
@@ -108,6 +117,23 @@
 
 - (IBAction)groupSelectionDoneTapped:(id)sender {
     self.groups = [self.groups filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"selected == YES"]];
+    
+  
+//    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasAlreadyChosenGroups"]) {
+    
+        for (NSDictionary *item in self.groups) {
+            SourceGroup *group = [SourceGroup MR_createEntity];
+            group.name = item[@"name"];
+            group.domain = item[@"domain"];
+            group.icon = item[@"icon"];
+            
+            [[NSUserDefaults standardUserDefaults] setObject:group.domain forKey:@"selectedDomain"];
+            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
+        }
+        
+//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasAlreadyChosenGroups"];
+//        [[NSUserDefaults standardUserDefaults] synchronize];
+//    }
 }
 
 #pragma mark - VK Delegate
@@ -136,17 +162,6 @@
 -(void)vkSdkNeedCaptchaEnter:(VKError *)captchaError
 {
     NSLog(@"%@", captchaError.description);
-}
-
-#pragma mark - Segues
-
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:@"groupsSelectedSegue"] && [segue.destinationViewController isKindOfClass:[GroupContentViewController class]])
-    {
-        GroupContentViewController *vc = (GroupContentViewController *)segue.destinationViewController;
-        vc.selectedGroups = self.groups;
-    }
 }
 
 @end

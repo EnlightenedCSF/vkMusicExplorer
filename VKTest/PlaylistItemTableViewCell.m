@@ -8,13 +8,6 @@
 
 #import "PlaylistItemTableViewCell.h"
 
-@interface PlaylistItemTableViewCell ()
-
-@property (strong, nonatomic) IBOutlet UILabel *songTitle;
-@property (strong, nonatomic) IBOutlet UILabel *songDuration;
-
-@end
-
 @implementation PlaylistItemTableViewCell
 
 - (void)awakeFromNib {
@@ -28,7 +21,9 @@
 }
 
 -(void) fillWithTitle:(NSString *)title duration:(NSNumber *)duration {
-    self.songTitle.text = title;
+    [self showDetails];
+    
+    self.songTitleLabel.text = title;
     
     int mins = (int)[duration integerValue] / 60;
     int secs = [duration integerValue] % 60;
@@ -39,7 +34,20 @@
     else {
         sec = [NSString stringWithFormat:@"%i", secs];
     }
-    self.songDuration.text = [NSString stringWithFormat:@"%i:%@", mins, sec];
+    self.songDurationLabel.text = [NSString stringWithFormat:@"%i:%@", mins, sec];
+}
+
+-(void)hideDetails {
+    self.songTitleLabel.hidden = YES;
+    self.songDurationLabel.hidden = YES;
+    self.playPauseBtn.hidden = YES;
+}
+
+-(void)showDetails {
+    self.songTitleLabel.hidden = NO;
+    self.songDurationLabel.hidden = NO;
+    self.playPauseBtn.hidden = NO;
+
 }
 
 @end

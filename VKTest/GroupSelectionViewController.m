@@ -9,21 +9,21 @@
 #import "GroupSelectionViewController.h"
 #import "GroupSelectionTableViewCell.h"
 #import "GroupContentViewController.h"
+#import "VKUserData.h"
 
 #import "SourceGroup.h"
+#import "Playlist.h"
 
 #import <VKSdk.h>
 #import <MagicalRecord.h>
-#define MR_SHORTHAND
 
-@interface GroupSelectionViewController () <UITableViewDataSource, UITableViewDelegate, VKSdkDelegate>
+@interface GroupSelectionViewController () <UITableViewDataSource, UITableViewDelegate>//, VKSdkDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property (strong, nonatomic) NSArray *groups;
 
-@property (strong, nonatomic) VKAccessToken *token;
-@property (copy, nonatomic) NSString *userId;
+@property (strong, nonnull) VKUserData *sharedData;
 
 @end
 
@@ -33,18 +33,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.sharedData = [VKUserData sharedData];
     self.groups = [NSArray array];
     
-    [VKSdk initializeWithDelegate:self andAppId:@"5009557"];
-    if (![VKSdk wakeUpSession]) {
-        [VKSdk authorize:@[VK_PER_GROUPS, VK_PER_WALL]];
-    }
-    else {
-        self.token = [VKSdk getAccessToken];
-        self.userId = self.token.userId;
-        
-        [self requestData];
-    }
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onVkSdkShouldPresentViewController:)
+                                                 name:@"vkShouldPresentViewController"
+                                               object:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -57,13 +52,11 @@
 
 -(void)requestData
 {
-    VKRequest *req = [[VKApi users] getSubscriptions:@{ @"user_id":  self.userId,
+    VKRequest *req = [[VKApi users] getSubscriptions:@{ @"user_id":  _sharedData.userId,
                                                         @"extended": @"1",
                                                         @"fields":   @"name,photo_50" }];
     [req executeWithResultBlock:^(VKResponse *response) {
         [self parseGroups:response.json];
-        
-        //NSLog(@"%@", response.json);
         
     } errorBlock:^(NSError *error) {
         NSLog(@"%@", [error description]);
@@ -118,18 +111,20 @@
 - (IBAction)groupSelectionDoneTapped:(id)sender {
     self.groups = [self.groups filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"selected == YES"]];
     
-  
 //    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasAlreadyChosenGroups"]) {
     
-        for (NSDictionary *item in self.groups) {
-            SourceGroup *group = [SourceGroup MR_createEntity];
-            group.name = item[@"name"];
-            group.domain = item[@"domain"];
-            group.icon = item[@"icon"];
+    [SourceGroup MR_truncateAll];
+    [Playlist MR_truncateAll];
+    
+    for (NSDictionary *item in self.groups) {
+        SourceGroup *group = [SourceGroup MR_createEntity];
+        group.name = item[@"name"];
+        group.domain = item[@"domain"];
+        group.icon = item[@"icon"];
             
-            [[NSUserDefaults standardUserDefaults] setObject:group.domain forKey:@"selectedDomain"];
-            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
-        }
+        [[NSUserDefaults standardUserDefaults] setObject:group.domain forKey:@"selectedDomain"];
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
+    }
         
 //        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasAlreadyChosenGroups"];
 //        [[NSUserDefaults standardUserDefaults] synchronize];
@@ -138,30 +133,10 @@
 
 #pragma mark - VK Delegate
 
--(void)vkSdkShouldPresentViewController:(UIViewController *)controller
+-(void)onVkSdkShouldPresentViewController:(id)controller
 {
-    [self.navigationController.topViewController presentViewController:controller animated:YES completion:nil];
-}
-
--(void)vkSdkReceivedNewToken:(VKAccessToken *)newToken
-{
-    self.token = newToken;
-    self.userId = newToken.userId;
-}
-
--(void)vkSdkTokenHasExpired:(VKAccessToken *)expiredToken
-{
-    self.token = [VKSdk getAccessToken];
-}
-
--(void)vkSdkUserDeniedAccess:(VKError *)authorizationError
-{
-    NSLog(@"%@", authorizationError.description);
-}
-
--(void)vkSdkNeedCaptchaEnter:(VKError *)captchaError
-{
-    NSLog(@"%@", captchaError.description);
+    UIViewController *vc = (UIViewController *)controller;
+    [self.navigationController.topViewController presentViewController:vc animated:YES completion:nil];
 }
 
 @end

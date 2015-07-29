@@ -2,7 +2,7 @@
 //  Playlist.m
 //  
 //
-//  Created by Ольферук Александр on 28.07.15.
+//  Created by Ольферук Александр on 29.07.15.
 //
 //
 
@@ -14,6 +14,7 @@
 @implementation Playlist
 
 @dynamic photoUrl;
+@dynamic isFavorite;
 @dynamic songs;
 @dynamic source;
 

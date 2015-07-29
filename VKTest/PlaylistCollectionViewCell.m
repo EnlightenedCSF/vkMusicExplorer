@@ -9,17 +9,20 @@
 #import "PlaylistCollectionViewCell.h"
 #import "PlaylistItemTableViewCell.h"
 #import "PlaylistHeaderTableViewCell.h"
-#import "VMEPlaylist.h"
+#import "Song.h"
+
+#define DEFAULT_ROW_HEIGHT 44
+#define MAX_PLAYLIST_SIZE 10
 
 @interface PlaylistCollectionViewCell ()
 
-@property (weak, nonatomic) VMEPlaylist *playlistData;
+@property (weak, nonatomic) Playlist *playlistData;
 
 @end
 
 @implementation PlaylistCollectionViewCell
 
--(void)fillWithPlaylist:(VMEPlaylist *)playlist {
+-(void)fillWithPlaylist:(Playlist *)playlist {
     self.playlistData = playlist;
 }
 
@@ -28,9 +31,9 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0) {
-        return 290;
+        return tableView.bounds.size.height - DEFAULT_ROW_HEIGHT * MAX_PLAYLIST_SIZE;
     }
-    return 44;
+    return DEFAULT_ROW_HEIGHT;
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -43,7 +46,7 @@
     if (section == 0) {
         return 1;
     }
-    return self.playlistData.songs.count;
+    return MAX_PLAYLIST_SIZE; //self.playlistData.songs.count;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -58,9 +61,15 @@
     else {
         PlaylistItemTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"playlistItemCell"];
         
-        NSDictionary *song = self.playlistData.songs[indexPath.row];
-        
-        [cell fillWithTitle:[NSString stringWithFormat:@"%@ - %@", song[@"artist"], song[@"title"]] duration:song[@"duration"]];
+        if (indexPath.row < self.playlistData.songs.count) {
+            NSArray *array = [self.playlistData.songs allObjects];
+            Song *song = array[indexPath.row];
+            
+            [cell fillWithTitle:[NSString stringWithFormat:@"%@ - %@", song.artist, song.title] duration:song.duration];
+        }
+        else {
+            [cell hideDetails];
+        }
         
         return cell;
     }

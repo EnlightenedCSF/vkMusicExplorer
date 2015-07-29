@@ -7,11 +7,15 @@
 //
 
 #import "AppDelegate.h"
+#import "VKUserData.h"
+#import "GroupSelectionViewController.h"
 
 #import <MagicalRecord.h>
 #import <VKSdk.h>
 
-@interface AppDelegate ()
+@interface AppDelegate () <VKSdkDelegate>
+
+@property (strong, nonatomic) VKUserData *sharedData;
 
 @end
 
@@ -24,12 +28,26 @@
 }
 
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
     [MagicalRecord setupCoreDataStackWithStoreNamed:@"VKTest"];
     
+    _sharedData = [VKUserData sharedData];
+    
 //    NSString *controllerName = [[NSUserDefaults standardUserDefaults] boolForKey:@"hasAlreadyChosenGroups"] ? @"contentVC" : @"sourceChoosingVC";
-//    self.window.rootViewController = [[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:controllerName];
+    
+//    UIViewController<VKSdkDelegate> *vc = [[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:controllerName];
+    
+    GroupSelectionViewController *vc = (GroupSelectionViewController *)[[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:@"sourceChoosingVC"];
+    
+    [VKSdk initializeWithDelegate:self andAppId:@"5009557"];
+    if (![VKSdk wakeUpSession]) {
+        [VKSdk authorize:@[VK_PER_GROUPS, VK_PER_WALL]];
+    }
+    _sharedData.token = [VKSdk getAccessToken];
+    _sharedData.userId = _sharedData.token.userId;
+    
+    self.window.rootViewController = vc;
     
     return YES;
 }
@@ -136,6 +154,36 @@
             abort();
         }
     }
+}
+
+#pragma mark - VK Delegate
+
+-(void)vkSdkShouldPresentViewController:(UIViewController *)controller
+{
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:@"vkShouldPresentViewController"
+        object:controller];
+}
+
+-(void)vkSdkReceivedNewToken:(VKAccessToken *)newToken
+{
+    _sharedData.token = newToken;
+    _sharedData.userId = _sharedData.token.userId;
+}
+
+-(void)vkSdkTokenHasExpired:(VKAccessToken *)expiredToken
+{
+    _sharedData.token = [VKSdk getAccessToken];
+}
+
+-(void)vkSdkUserDeniedAccess:(VKError *)authorizationError
+{
+    NSLog(@"%@", authorizationError.description);
+}
+
+-(void)vkSdkNeedCaptchaEnter:(VKError *)captchaError
+{
+    NSLog(@"%@", captchaError.description);
 }
 
 @end

@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 EnlightenedCSF. All rights reserved.
 //
 
+#import <VKSdk.h>
 #import <VKApi.h>
 #import <MagicalRecord.h>
 #import <ReactiveCocoa.h>
@@ -18,10 +19,11 @@
 #import "PlaylistHeaderTableViewCell.h"
 #import "PlaylistItemTableViewCell.h"
 #import "PlaylistCollectionViewCell.h"
-#import "VMEPlaylist.h"
 #import "SourceGroupTableViewController.h"
+#import "VKUserData.h"
 
-@interface GroupContentViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UIPopoverControllerDelegate>
+
+@interface GroupContentViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UIPopoverControllerDelegate, UITabBarControllerDelegate> //, VKSdkDelegate>
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 @property (weak, nonatomic) IBOutlet UIButton *favBtn;
@@ -52,14 +54,21 @@
     self.isFirstOne = YES;
     self.currentOffset = 0;
     self.currentPageIndex = 0;
+    self.tabBarController.delegate = self;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onVkSdkShouldPresentViewController:)
+                                                 name:@"vkShouldPresentViewController"
+                                               object:nil];
+
     
     [RACObserve(self, currentOffset) subscribeNext:^(id x) {
         NSLog(@"Current offset: %@", x);
     }];
 }
 
--(void)viewWillAppear:(BOOL)animated {
-    
+-(void)viewWillAppear:(BOOL)animated
+{
     [self fetchAllSources];
     
     [self downloadNextPlaylist];
@@ -86,16 +95,42 @@
 
 -(void)fetchAllSources
 {
-    self.selectedGroups = (NSArray *)[[SourceGroup MR_findAll] mutableCopy];
+    self.selectedGroups = [NSMutableArray arrayWithArray:[[SourceGroup MR_findAll] mutableCopy]];
+}
+
+-(void)clearGroups
+{
+    [self.selectedGroups removeAllObjects];
 }
 
 -(void)reloadPosts
 {
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error)
+     {
+         NSLog(@"Total playlists: %lu", (unsigned long)self.playlists.count);
+         NSLog(@"%@", contextDidSave ? @"Did save all posts successfully!" : [error localizedDescription]);
+         
+         [self clearPlaylists];
+         [self downloadNextPlaylist];
+         [self downloadNextPlaylist];
+     }];
+
+}
+
+-(void)savePlaylists
+{
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error)
+     {
+         NSLog(@"Total playlists: %lu", (unsigned long)self.playlists.count);
+         NSLog(@"%@", contextDidSave ? @"Did save all posts successfully!" : [error localizedDescription]);
+    }];
+}
+
+-(void)clearPlaylists
+{
     self.currentOffset = 0;
     self.currentPageIndex = 0;
     [self.playlists removeAllObjects];
-    [self downloadNextPlaylist];
-    [self downloadNextPlaylist];
 }
 
 -(void)downloadNextPlaylist
@@ -110,7 +145,7 @@
         }
         else {
             [self.collectionView reloadData];
-            [self enableFavButtonIfNeeded];
+            //[self enableFavButtonIfNeeded];
         }
         
     } errorBlock:^(NSError *error) {
@@ -131,7 +166,7 @@
 
 -(BOOL)parsePlaylist:(NSDictionary *)json andAddTo:(NSMutableArray *)target
 {
-    VMEPlaylist *newPlaylist = [[VMEPlaylist alloc] init];
+    Playlist *newPlaylist = [Playlist MR_createEntity];
     
     NSDictionary *item = json[@"items"][0];
     NSArray *attachments = item[@"attachments"];
@@ -140,6 +175,8 @@
         attachments = repost[@"attachments"];
     }
     if (!attachments) {
+        [newPlaylist MR_deleteEntity];
+        newPlaylist = nil;
         return NO;
     }
     
@@ -151,20 +188,31 @@
         else if ([attachment[@"type"] isEqualToString:@"audio"]) {
             wasAtLeastOneSong = YES;
             
-            NSDictionary *song = attachment[@"audio"];
+            NSDictionary *item = attachment[@"audio"];
             
-            [newPlaylist.songs addObject:@{ @"artist": song[@"artist"],
-                                            @"title": song[@"title"],
-                                            @"duration": @([song[@"duration"] integerValue]),
-                                            @"url": song[@"url"] }];
+            Song *song = [Song MR_createEntity];
+            song.artist = item[@"artist"];
+            song.title = item[@"title"];
+            song.duration = @([item[@"duration"] intValue]);
+            song.url = item[@"url"];
+            
+            [newPlaylist addSongsObject:song];
         }
     }
     
     if (!wasAtLeastOneSong) {
+        [newPlaylist MR_deleteEntity];
+        newPlaylist = nil;
         return NO;
     }
     
     [target addObject:newPlaylist];
+    
+    Playlist *mbStoredPlaylist = [Playlist MR_findFirstWithPredicate:[NSPredicate predicateWithFormat:@"(photoUrl LIKE %@) AND (isFavorite == YES)", newPlaylist.photoUrl]];
+    if (mbStoredPlaylist) {
+        newPlaylist.isFavorite = YES;
+    }
+    
     return YES;
 }
 
@@ -173,13 +221,7 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == 0) {
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    }
-    else {
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
-        //do more stuff
-    }
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
 #pragma mark - Collection view stuff
@@ -262,47 +304,38 @@
     [self.aPopoverController presentPopoverFromRect:btn.frame inView:self.view permittedArrowDirections:(UIPopoverArrowDirectionAny) animated:YES];
 }
 
-- (IBAction)toggleFavoriteTapped:(UIButton *)sender {
-    if (!sender.isSelected) {
-        VMEPlaylist *sourcePlaylist = self.playlists[self.currentPageIndex];
-        
-        Playlist *newPlaylist = [Playlist MR_createEntity];
-        newPlaylist.photoUrl = sourcePlaylist.photoUrl;
-        
-        for (NSDictionary *item in sourcePlaylist.songs) {
-            Song *song = [Song MR_createEntity];
-            song.artist = item[@"artist"];
-            song.title = item[@"title"];
-            song.duration = item[@"duration"];
-            song.url = item[@"url"];
-            
-            [newPlaylist addSongsObject:song];
-        }
-        
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
-            if (contextDidSave) {
-                [sender setSelected:YES];
-                sender.imageView.image = [UIImage imageNamed:@"icon_heart"];
-            }
-            else
-                NSLog(@"%@", [error description]);
-        }];
-    }
-    else {
-        //todo:
-    }
+- (IBAction)toggleFavoriteTapped:(UIButton *)sender
+{
+    Playlist *playlist = self.playlists[self.currentPageIndex];
+    playlist.isFavorite = !playlist.isFavorite;
+    
+    [sender setImage:[UIImage imageNamed: (playlist.isFavorite ? @"icon_heart" : @"icon_heart_empty")] forState:UIControlStateNormal];
 }
 
--(void)enableFavButtonIfNeeded {
-    [self.favBtn setSelected:NO];
-    self.favBtn.imageView.image = [UIImage imageNamed:@"icon_heart_empty"];
-    
-    VMEPlaylist *playlist = self.playlists[self.currentPageIndex];
+-(void)enableFavButtonIfNeeded
+{
+    Playlist *playlist = self.playlists[self.currentPageIndex];
+    [_favBtn setImage:[UIImage imageNamed: (playlist.isFavorite ? @"icon_heart" : @"icon_heart_empty")] forState:UIControlStateNormal];
+}
 
-    Playlist *p = [Playlist MR_findFirstByAttribute:@"photoUrl" withValue:playlist.photoUrl];
-    if (p && [p.photoUrl isEqualToString:playlist.photoUrl]) {
-        [self.favBtn setSelected:YES];
-        self.favBtn.imageView.image = [UIImage imageNamed:@"icon_heart"];
+#pragma mark - VK Delegate
+
+-(void)onVkSdkShouldPresentViewController:(id)controller
+{
+    UIViewController *vc = (UIViewController *)controller;
+    [self.navigationController.topViewController presentViewController:vc animated:YES completion:nil];
+}
+
+#pragma mark - Tab Bar Delegate
+
+-(void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController
+{
+    if (![viewController isKindOfClass:[self class]] ) {
+        [self savePlaylists];
+        [self clearPlaylists];
+        [self clearGroups];
+        self.isFirstOne = YES;
+        self.currentOffset = 0;
     }
 }
 

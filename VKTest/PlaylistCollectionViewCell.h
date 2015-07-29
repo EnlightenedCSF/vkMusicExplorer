@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-#import "VMEPlaylist.h"
+#import "Playlist.h"
 
 @interface PlaylistCollectionViewCell : UICollectionViewCell <UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *playlist;
 
--(void)fillWithPlaylist:(VMEPlaylist *)playlist;
+-(void)fillWithPlaylist:(Playlist *)playlist;
 
 @end

@@ -10,6 +10,11 @@
 
 @interface PlaylistItemTableViewCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UIButton *playPauseBtn;
+@property (weak, nonatomic) IBOutlet UILabel *songTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *songDurationLabel;
+
 -(void)fillWithTitle:(NSString *)title duration:(NSNumber *)duration;
+-(void)hideDetails;
 
 @end

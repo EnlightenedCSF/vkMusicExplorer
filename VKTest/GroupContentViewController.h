@@ -10,6 +10,6 @@
 
 @interface GroupContentViewController : UIViewController
 
-@property (strong, nonatomic) NSArray *selectedGroups;
+@property (strong, nonatomic) NSMutableArray *selectedGroups;
 
 @end

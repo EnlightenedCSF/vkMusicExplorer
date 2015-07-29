@@ -19,7 +19,7 @@
 
 @implementation PlaylistHeaderTableViewCell
 
--(void)fill:(NSString *)photoUrl{
+-(void)fill:(NSString *)photoUrl {
     self.pic.contentMode = UIViewContentModeScaleAspectFit;
     [self.pic sd_setImageWithURL:[NSURL URLWithString:photoUrl]];
 }

@@ -9,12 +9,15 @@
 #import "PlaylistCollectionViewCell.h"
 #import "PlaylistItemTableViewCell.h"
 #import "PlaylistHeaderTableViewCell.h"
+
 #import "Song.h"
+
+#import "VKMusicPlayer.h"
 
 #define DEFAULT_ROW_HEIGHT 44
 #define MAX_PLAYLIST_SIZE 10
 
-@interface PlaylistCollectionViewCell ()
+@interface PlaylistCollectionViewCell () <VKPlaylistProtocol>
 
 @property (weak, nonatomic) Playlist *playlistData;
 
@@ -46,7 +49,7 @@
     if (section == 0) {
         return 1;
     }
-    return MAX_PLAYLIST_SIZE; //self.playlistData.songs.count;
+    return MAX_PLAYLIST_SIZE;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -54,7 +57,7 @@
     if (indexPath.section == 0) {
         PlaylistHeaderTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"playlistHeaderCell"];
         
-        [cell fill:self.playlistData.photoUrl];
+        [cell fill:self.playlistData.photoUrl andTime:self.playlistData.date];
         
         return cell;
     }
@@ -62,10 +65,14 @@
         PlaylistItemTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"playlistItemCell"];
         
         if (indexPath.row < self.playlistData.songs.count) {
-            NSArray *array = [self.playlistData.songs allObjects];
-            Song *song = array[indexPath.row];
             
-            [cell fillWithTitle:[NSString stringWithFormat:@"%@ - %@", song.artist, song.title] duration:song.duration];
+            NSPredicate *p = [NSPredicate predicateWithFormat:@"index == %i", indexPath.row];
+            Song *song = [[[[self.playlistData.songs mutableCopy] allObjects] filteredArrayUsingPredicate:p] firstObject];
+            
+            [cell fillWithTitle:[NSString stringWithFormat:@"%@ - %@", song.artist, song.title] duration:[song.duration intValue]];
+            cell.tag = [song.index intValue];
+            
+            cell.delegate = self;
         }
         else {
             [cell hideDetails];
@@ -78,6 +85,19 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:indexPath.section != 0];
+}
+
+#pragma mark - VK Protocol Delegate
+
+-(void)onPlayPauseBtnTapped:(id)sender
+{
+    PlaylistItemTableViewCell *cell = (PlaylistItemTableViewCell *)sender;
+
+    NSArray *arr = [[self.playlistData.songs mutableCopy] allObjects];
+    [VKMusicPlayer sharedPlayer].playlist = [NSMutableArray arrayWithArray:arr];
+    
+    [[VKMusicPlayer sharedPlayer] togglePlayingAtIndex:(int)cell.tag];
+
 }
 
 @end

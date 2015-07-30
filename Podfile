@@ -6,6 +6,7 @@ target 'VKTest' do
     pod 'ReactiveCocoa', '2.1.8'
     pod 'MagicalRecord', '~> 2.3'
     pod 'SDWebImage', '~> 3.7'
+    pod 'AFNetworking', '~> 2.5'
 end
 
 target 'VKTestTests' do

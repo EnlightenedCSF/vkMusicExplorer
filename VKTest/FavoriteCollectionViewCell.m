@@ -12,6 +12,7 @@
 #import "FavoriteCollectionViewCell.h"
 
 #define RADIANS(degrees) ((degrees * M_PI) / 180.0)
+#define LOW_BUDGET_INFINITY 99999
 
 @interface FavoriteCollectionViewCell ()
 
@@ -25,6 +26,9 @@
 {
     self.cover.contentMode = UIViewContentModeScaleAspectFit;
     [self.cover sd_setImageWithURL:[NSURL URLWithString:picUrl]];
+    
+    self.deleteBtn.hidden = YES;
+    [self stopAnimating];
 }
 
 -(void)toggleEditing
@@ -53,7 +57,7 @@
     self.cover.transform = leftWobble;
     [UIView beginAnimations:@"wobble" context:(__bridge void *)(self.cover)];
     [UIView setAnimationRepeatAutoreverses:YES];
-    [UIView setAnimationRepeatCount:99999];
+    [UIView setAnimationRepeatCount:LOW_BUDGET_INFINITY];
     [UIView setAnimationDuration:0.25];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDidStopSelector:@selector(wobbleEnded:finished:context:)];

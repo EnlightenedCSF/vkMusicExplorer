@@ -41,7 +41,6 @@ static NSString * const reuseIdentifier = @"favCell";
 
 -(void)fetchFavs
 {
-    self.playlists = [NSMutableArray array];
     self.playlists = [NSMutableArray arrayWithArray:[Playlist MR_findByAttribute:@"isFavorite" withValue:@(YES)]];
 }
 
@@ -93,6 +92,7 @@ static NSString * const reuseIdentifier = @"favCell";
 
 -(void)onStartEditing:(UILongPressGestureRecognizer *)gestureRecognizer
 {
+    NSLog(@"%ld", (long)gestureRecognizer.state);
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded) {
         return;
     }
@@ -151,6 +151,11 @@ static NSString * const reuseIdentifier = @"favCell";
         if (self.editing) {
             [self stopEditing];
         }
+        
+#warning Не успевает сохранить
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
+            NSLog(@"Successfully saved from favorite VC");
+        }];
     }
 }
 

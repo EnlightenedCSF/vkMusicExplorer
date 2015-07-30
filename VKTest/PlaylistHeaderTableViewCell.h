@@ -10,6 +10,6 @@
 
 @interface PlaylistHeaderTableViewCell : UITableViewCell
 
--(void)fill:(NSString *)photoUrl;
+-(void)fill:(NSString *)photoUrl andTime:(NSNumber *)time;
 
 @end

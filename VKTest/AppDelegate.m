@@ -9,6 +9,9 @@
 #import "AppDelegate.h"
 #import "VKUserData.h"
 #import "GroupSelectionViewController.h"
+#import "GroupContentViewController.h"
+
+#import "Playlist.h"
 
 #import <MagicalRecord.h>
 #import <VKSdk.h>
@@ -34,19 +37,23 @@
     
     _sharedData = [VKUserData sharedData];
     
-//    NSString *controllerName = [[NSUserDefaults standardUserDefaults] boolForKey:@"hasAlreadyChosenGroups"] ? @"contentVC" : @"sourceChoosingVC";
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"hasAlreadyAuthorized"]) { // very first time
+        [[NSUserDefaults standardUserDefaults] setObject:@(NO) forKey:@"hasAlreadyAuthorized"];
+    }
     
-//    UIViewController<VKSdkDelegate> *vc = [[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:controllerName];
+    id vc;
+    if (![[[NSUserDefaults standardUserDefaults] objectForKey:@"hasAlreadyAuthorized"] boolValue]) {
+        vc = (GroupSelectionViewController *)[[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:@"sourceChoosingVC"];
+    }
+    else {
+        vc = (GroupContentViewController *)[[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:@"contentVCTab"];
+    }
     
-    GroupSelectionViewController *vc = (GroupSelectionViewController *)[[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:@"sourceChoosingVC"];
+    [Playlist MR_truncateAll];
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     [VKSdk initializeWithDelegate:self andAppId:@"5009557"];
-    if (![VKSdk wakeUpSession]) {
-        [VKSdk authorize:@[VK_PER_GROUPS, VK_PER_WALL]];
-    }
-    _sharedData.token = [VKSdk getAccessToken];
-    _sharedData.userId = _sharedData.token.userId;
-    
+        
     self.window.rootViewController = vc;
     
     return YES;
@@ -87,59 +94,58 @@
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
-- (NSManagedObjectModel *)managedObjectModel {
-    // The managed object model for the application. It is a fatal error for the application not to be able to find and load its model.
-    if (_managedObjectModel != nil) {
-        return _managedObjectModel;
-    }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"VKTest" withExtension:@"momd"];
-    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-    return _managedObjectModel;
-}
-
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
-    // The persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it.
-    if (_persistentStoreCoordinator != nil) {
-        return _persistentStoreCoordinator;
-    }
-    
-    // Create the coordinator and store
-    
-    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"VKTest.sqlite"];
-    NSError *error = nil;
-    NSString *failureReason = @"There was an error creating or loading the application's saved data.";
-    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
-        // Report any error we got.
-        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        dict[NSLocalizedDescriptionKey] = @"Failed to initialize the application's saved data";
-        dict[NSLocalizedFailureReasonErrorKey] = failureReason;
-        dict[NSUnderlyingErrorKey] = error;
-        error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:9999 userInfo:dict];
-        // Replace this with code to handle the error appropriately.
-        // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
-    
-    return _persistentStoreCoordinator;
-}
-
-
-- (NSManagedObjectContext *)managedObjectContext {
-    // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.)
-    if (_managedObjectContext != nil) {
-        return _managedObjectContext;
-    }
-    
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (!coordinator) {
-        return nil;
-    }
-    _managedObjectContext = [[NSManagedObjectContext alloc] init];
-    [_managedObjectContext setPersistentStoreCoordinator:coordinator];
-    return _managedObjectContext;
-}
+//- (NSManagedObjectModel *)managedObjectModel {
+//    // The managed object model for the application. It is a fatal error for the application not to be able to find and load its model.
+//    if (_managedObjectModel != nil) {
+//        return _managedObjectModel;
+//    }
+//    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"VKTest" withExtension:@"momd"];
+//    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+//    return _managedObjectModel;
+//}
+//
+//- (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
+//    // The persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it.
+//    if (_persistentStoreCoordinator != nil) {
+//        return _persistentStoreCoordinator;
+//    }
+//    
+//    // Create the coordinator and store
+//    
+//    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+//    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"VKTest.sqlite"];
+//    NSError *error = nil;
+//    NSString *failureReason = @"There was an error creating or loading the application's saved data.";
+//    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
+//        // Report any error we got.
+//        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+//        dict[NSLocalizedDescriptionKey] = @"Failed to initialize the application's saved data";
+//        dict[NSLocalizedFailureReasonErrorKey] = failureReason;
+//        dict[NSUnderlyingErrorKey] = error;
+//        error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:9999 userInfo:dict];
+//        // Replace this with code to handle the error appropriately.
+//        // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+//        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+//        abort();
+//    }
+//    
+//    return _persistentStoreCoordinator;
+//}
+//
+//- (NSManagedObjectContext *)managedObjectContext {
+//    // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.)
+//    if (_managedObjectContext != nil) {
+//        return _managedObjectContext;
+//    }
+//    
+//    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+//    if (!coordinator) {
+//        return nil;
+//    }
+//    _managedObjectContext = [[NSManagedObjectContext alloc] init];
+//    [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+//    return _managedObjectContext;
+//}
 
 #pragma mark - Core Data Saving support
 
@@ -169,6 +175,8 @@
 {
     _sharedData.token = newToken;
     _sharedData.userId = _sharedData.token.userId;
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"vkAuthorized" object:nil];
 }
 
 -(void)vkSdkTokenHasExpired:(VKAccessToken *)expiredToken

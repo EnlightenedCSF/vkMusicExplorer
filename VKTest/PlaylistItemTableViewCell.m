@@ -10,23 +10,14 @@
 
 @implementation PlaylistItemTableViewCell
 
-- (void)awakeFromNib {
-    // Initialization code
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
-}
-
--(void) fillWithTitle:(NSString *)title duration:(NSNumber *)duration {
+-(void) fillWithTitle:(NSString *)title duration:(int)duration {
     [self showDetails];
+    self.isPlaying = NO;
     
     self.songTitleLabel.text = title;
     
-    int mins = (int)[duration integerValue] / 60;
-    int secs = [duration integerValue] % 60;
+    int mins = duration / 60;
+    int secs = duration % 60;
     NSString *sec;
     if (secs < 10) {
         sec = [NSString stringWithFormat:@"0%i", secs];
@@ -48,6 +39,16 @@
     self.songDurationLabel.hidden = NO;
     self.playPauseBtn.hidden = NO;
 
+}
+
+- (IBAction)playPauseBtnTapped:(UIButton *)sender
+{
+    self.isPlaying = !self.isPlaying;
+    [self.playPauseBtn setImage:[UIImage imageNamed:(self.isPlaying ? @"icon_pause" : @"icon_play")] forState:UIControlStateNormal];
+    
+    if ([_delegate respondsToSelector:@selector(onPlayPauseBtnTapped:)]) {
+        [_delegate onPlayPauseBtnTapped:self];
+    }
 }
 
 @end

@@ -10,6 +10,5 @@
 
 @interface GroupSelectionViewController : UIViewController
 
-
 @end
 

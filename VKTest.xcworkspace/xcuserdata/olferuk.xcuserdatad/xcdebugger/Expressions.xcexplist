@@ -3,9 +3,6 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "-[FavoritesCollectionViewController viewWillAppear:]:FavoritesCollectionViewController.m">
-      </ContextState>
-      <ContextState
          contextName = "-[GroupContentViewController parsePlaylist:andAddTo:]:GroupContentViewController.m">
          <PersistentStrings>
             <PersistentString
@@ -13,6 +10,38 @@
             </PersistentString>
             <PersistentString
                value = "mbStoredPlaylist.isFavorite">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[VKMusicPlayer togglePlayingAtIndex:]:VKMusicPlayer.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "item.index">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[GroupContentViewController downloadNextPlaylist]:GroupContentViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "group.domain">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[GroupContentViewController enableFavButtonIfNeeded]:GroupContentViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "playlist.isFavorite">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[FavoritesCollectionViewController fetchFavs]:FavoritesCollectionViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.playlists[0].artist">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -25,16 +54,33 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[GroupContentViewController fetchAllSources]:GroupContentViewController.m">
-      </ContextState>
-      <ContextState
-         contextName = "-[GroupContentViewController collectionView:cellForItemAtIndexPath:]:GroupContentViewController.m">
-      </ContextState>
-      <ContextState
-         contextName = "-[AppDelegate application:didFinishLaunchingWithOptions:]:AppDelegate.m">
+         contextName = "__45-[GroupContentViewController viewWillAppear:]_block_invoke:GroupContentViewController.m">
       </ContextState>
       <ContextState
          contextName = "-[GroupSelectionViewController requestData]:GroupSelectionViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[GroupSelectionViewController viewDidLoad]:GroupSelectionViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[GroupContentViewController collectionView:numberOfItemsInSection:]:GroupContentViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[GroupContentViewController viewWillAppear:]:GroupContentViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.currentOffset">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[FavoritesCollectionViewController viewWillAppear:]:FavoritesCollectionViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[FavoritesCollectionViewController collectionView:numberOfItemsInSection:]:FavoritesCollectionViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[GroupSelectionViewController groupSelectionDoneTapped:]:GroupSelectionViewController.m">
       </ContextState>
       <ContextState
          contextName = "-[GroupContentViewController toggleFavoriteTapped:]:GroupContentViewController.m">
@@ -48,33 +94,36 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "__45-[GroupContentViewController viewWillAppear:]_block_invoke:GroupContentViewController.m">
-      </ContextState>
-      <ContextState
-         contextName = "-[FavoritesCollectionViewController fetchFavs]:FavoritesCollectionViewController.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "self.playlists[0].artist">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "-[FavoritesCollectionViewController collectionView:numberOfItemsInSection:]:FavoritesCollectionViewController.m">
-      </ContextState>
-      <ContextState
-         contextName = "-[GroupContentViewController collectionView:numberOfItemsInSection:]:GroupContentViewController.m">
-      </ContextState>
-      <ContextState
          contextName = "__50-[GroupContentViewController saveCurrentPlaylists]_block_invoke:GroupContentViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[AppDelegate application:didFinishLaunchingWithOptions:]:AppDelegate.m">
       </ContextState>
       <ContextState
          contextName = "__45-[GroupContentViewController viewWillAppear:]_block_invoke_2:GroupContentViewController.m">
       </ContextState>
       <ContextState
-         contextName = "-[GroupContentViewController enableFavButtonIfNeeded]:GroupContentViewController.m">
+         contextName = "-[GroupContentViewController fetchAllSources]:GroupContentViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[GroupContentViewController collectionView:cellForItemAtIndexPath:]:GroupContentViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[PlaylistCollectionViewCell onPlayPauseBtnTapped:]:PlaylistCollectionViewCell.m">
          <PersistentStrings>
             <PersistentString
-               value = "playlist.isFavorite">
+               value = "cell.tag">
+            </PersistentString>
+            <PersistentString
+               value = "self.playlistData.songs">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[GroupContentViewController savePlaylists]:GroupContentViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.playlists">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

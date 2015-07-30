@@ -17,7 +17,7 @@
 #import <VKSdk.h>
 #import <MagicalRecord.h>
 
-@interface GroupSelectionViewController () <UITableViewDataSource, UITableViewDelegate>//, VKSdkDelegate>
+@interface GroupSelectionViewController () <UITableViewDataSource, UITableViewDelegate, UINavigationControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
@@ -40,26 +40,54 @@
                                              selector:@selector(onVkSdkShouldPresentViewController:)
                                                  name:@"vkShouldPresentViewController"
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onVkAuthorized)
+                                                 name:@"vkAuthorized"
+                                               object:nil];
 }
 
--(void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
     
-    if ([VKSdk wakeUpSession]) {
+    if (![VKSdk wakeUpSession]) {
+        [VKSdk authorize:@[ VK_PER_GROUPS, VK_PER_WALL ]];
+        
+        _sharedData.token = [VKSdk getAccessToken];
+        _sharedData.userId = _sharedData.token.userId;
+    }
+    else {
         [self requestData];
     }
 }
 
+-(void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 -(void)requestData
 {
-    VKRequest *req = [[VKApi users] getSubscriptions:@{ @"user_id":  _sharedData.userId,
-                                                        @"extended": @"1",
-                                                        @"fields":   @"name,photo_50" }];
-    [req executeWithResultBlock:^(VKResponse *response) {
-        [self parseGroups:response.json];
+    VKRequest *preReq = [[VKApi users] get:@{ @"user_ids": _sharedData.userId,
+                                              @"fields": @"id",
+                                              @"name_case": @"Nom" }];
+    [preReq executeWithResultBlock:^(VKResponse *response) {
+        
+        _sharedData.userId = response.json[0][@"id"];
+        
+        VKRequest *req = [[VKApi users] getSubscriptions:@{ @"user_id":  _sharedData.userId,
+                                                            @"extended": @"1",
+                                                            @"fields":   @"name,photo_50" }];
+        [req executeWithResultBlock:^(VKResponse *response) {
+            [self parseGroups:response.json];
+            
+        } errorBlock:^(NSError *error) {
+            NSLog(@"%@", [error description]);
+        }];
+
         
     } errorBlock:^(NSError *error) {
-        NSLog(@"%@", [error description]);
+        NSLog(@"%@", [error localizedDescription]);
     }];
 }
 
@@ -108,13 +136,13 @@
     [self.groups[path.row] setObject:@(sender.isOn) forKey:@"selected"];
 }
 
-- (IBAction)groupSelectionDoneTapped:(id)sender {
+- (IBAction)groupSelectionDoneTapped:(id)sender
+{    
     self.groups = [self.groups filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"selected == YES"]];
-    
-//    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasAlreadyChosenGroups"]) {
     
     [SourceGroup MR_truncateAll];
     [Playlist MR_truncateAll];
+    [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfAndWait];
     
     for (NSDictionary *item in self.groups) {
         SourceGroup *group = [SourceGroup MR_createEntity];
@@ -125,18 +153,27 @@
         [[NSUserDefaults standardUserDefaults] setObject:group.domain forKey:@"selectedDomain"];
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
     }
-        
-//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasAlreadyChosenGroups"];
-//        [[NSUserDefaults standardUserDefaults] synchronize];
-//    }
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 #pragma mark - VK Delegate
 
 -(void)onVkSdkShouldPresentViewController:(id)controller
 {
-    UIViewController *vc = (UIViewController *)controller;
-    [self.navigationController.topViewController presentViewController:vc animated:YES completion:nil];
+    NSNotification *vc = (NSNotification *)controller;
+    UINavigationController *nc = (UINavigationController *)vc.object;
+    nc.delegate = self;
+    nc.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    [self presentViewController:nc animated:YES completion:nil];
+}
+
+-(void)onVkAuthorized
+{
+    [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"hasAlreadyAuthorized"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [self requestData];
 }
 
 @end

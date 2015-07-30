@@ -8,13 +8,24 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol VKPlaylistProtocol <NSObject>
+
+-(void)onPlayPauseBtnTapped:(id)sender;
+
+@end
+
 @interface PlaylistItemTableViewCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UIButton *playPauseBtn;
 @property (weak, nonatomic) IBOutlet UILabel *songTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *songDurationLabel;
 
--(void)fillWithTitle:(NSString *)title duration:(NSNumber *)duration;
+@property (weak, nonatomic) id<VKPlaylistProtocol> delegate;
+
+@property (assign, nonatomic) BOOL isPlaying;
+
+
+-(void)fillWithTitle:(NSString *)title duration:(int)duration;
 -(void)hideDetails;
 
 @end

@@ -10,6 +10,6 @@
 
 @interface GroupSelectionTableViewCell : UITableViewCell
 
--(void)fillWithName:(NSString *)name andImageUrlString:(NSString *)url;
+-(void)fillWithName:(NSString *)name imageUrlString:(NSString *)url isOn:(BOOL)isOn;
 
 @end

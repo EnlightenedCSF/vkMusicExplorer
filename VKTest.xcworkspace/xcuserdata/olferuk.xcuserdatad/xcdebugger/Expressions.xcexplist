@@ -14,6 +14,9 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "__40-[VKPlayerViewController loadArtistInfo]_block_invoke:VKPlayerViewController.m">
+      </ContextState>
+      <ContextState
          contextName = "-[VKMusicPlayer togglePlayingAtIndex:]:VKMusicPlayer.m">
          <PersistentStrings>
             <PersistentString
@@ -46,6 +49,9 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "__57-[AppDelegate application:didFinishLaunchingWithOptions:]_block_invoke:AppDelegate.m">
+      </ContextState>
+      <ContextState
          contextName = "-[FavoritesCollectionViewController startWiggling]:FavoritesCollectionViewController.m">
          <PersistentStrings>
             <PersistentString
@@ -63,6 +69,17 @@
          contextName = "-[GroupSelectionViewController viewDidLoad]:GroupSelectionViewController.m">
       </ContextState>
       <ContextState
+         contextName = "-[VKPlayerViewController loadLyrics]:VKPlayerViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "song.title">
+            </PersistentString>
+            <PersistentString
+               value = "song.artist">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[GroupContentViewController collectionView:numberOfItemsInSection:]:GroupContentViewController.m">
       </ContextState>
       <ContextState
@@ -77,10 +94,10 @@
          contextName = "-[FavoritesCollectionViewController viewWillAppear:]:FavoritesCollectionViewController.m">
       </ContextState>
       <ContextState
-         contextName = "-[FavoritesCollectionViewController collectionView:numberOfItemsInSection:]:FavoritesCollectionViewController.m">
+         contextName = "-[GroupSelectionViewController groupSelectionDoneTapped:]:GroupSelectionViewController.m">
       </ContextState>
       <ContextState
-         contextName = "-[GroupSelectionViewController groupSelectionDoneTapped:]:GroupSelectionViewController.m">
+         contextName = "-[FavoritesCollectionViewController collectionView:numberOfItemsInSection:]:FavoritesCollectionViewController.m">
       </ContextState>
       <ContextState
          contextName = "-[GroupContentViewController toggleFavoriteTapped:]:GroupContentViewController.m">
@@ -103,7 +120,21 @@
          contextName = "__45-[GroupContentViewController viewWillAppear:]_block_invoke_2:GroupContentViewController.m">
       </ContextState>
       <ContextState
+         contextName = "-[VKPlayerViewController tableView:numberOfRowsInSection:]:VKPlayerViewController.m">
+      </ContextState>
+      <ContextState
          contextName = "-[GroupContentViewController fetchAllSources]:GroupContentViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[VKPlayerViewController onPlayPauseBtnTapped:]:VKPlayerViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "cell.tag">
+            </PersistentString>
+            <PersistentString
+               value = "anotherCell.tag">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "-[GroupContentViewController collectionView:cellForItemAtIndexPath:]:GroupContentViewController.m">
@@ -112,7 +143,13 @@
          contextName = "-[PlaylistCollectionViewCell onPlayPauseBtnTapped:]:PlaylistCollectionViewCell.m">
          <PersistentStrings>
             <PersistentString
+               value = "arr[0]">
+            </PersistentString>
+            <PersistentString
                value = "cell.tag">
+            </PersistentString>
+            <PersistentString
+               value = "arr[1]">
             </PersistentString>
             <PersistentString
                value = "self.playlistData.songs">
@@ -124,6 +161,14 @@
          <PersistentStrings>
             <PersistentString
                value = "self.playlists">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[MusiXmatchService performQuery:]:MusiXmatchService.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "responce.statuCode">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

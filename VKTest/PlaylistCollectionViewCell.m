@@ -15,7 +15,7 @@
 #import "VKMusicPlayer.h"
 
 #define DEFAULT_ROW_HEIGHT 44
-#define MAX_PLAYLIST_SIZE 10
+#define MAX_PLAYLIST_SIZE 9
 
 @interface PlaylistCollectionViewCell () <VKPlaylistProtocol>
 
@@ -64,12 +64,12 @@
     else {
         PlaylistItemTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"playlistItemCell"];
         
-        if (indexPath.row < self.playlistData.songs.count) {
-            
+        if (indexPath.row < self.playlistData.songs.count)
+        {
             NSPredicate *p = [NSPredicate predicateWithFormat:@"index == %i", indexPath.row];
             Song *song = [[[[self.playlistData.songs mutableCopy] allObjects] filteredArrayUsingPredicate:p] firstObject];
             
-            [cell fillWithTitle:[NSString stringWithFormat:@"%@ - %@", song.artist, song.title] duration:[song.duration intValue]];
+            [cell fillWithSong:song];
             cell.tag = [song.index intValue];
             
             cell.delegate = self;
@@ -94,10 +94,23 @@
     PlaylistItemTableViewCell *cell = (PlaylistItemTableViewCell *)sender;
 
     NSArray *arr = [[self.playlistData.songs mutableCopy] allObjects];
+    arr = [arr sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        Song *a = (Song *)obj1;
+        Song *b = (Song *)obj2;
+        return a.index > b.index;
+    }];
+    
+    for (NSInteger i = 0; i < [self.playlist numberOfRowsInSection:1]; ++i) {
+        PlaylistItemTableViewCell *anotherCell = (PlaylistItemTableViewCell *)[_playlist cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:1]];
+        if (anotherCell.tag == cell.tag) {
+            continue;
+        }
+        [anotherCell setIsPlaying:NO];
+    }
+
     [VKMusicPlayer sharedPlayer].playlist = [NSMutableArray arrayWithArray:arr];
     
     [[VKMusicPlayer sharedPlayer] togglePlayingAtIndex:(int)cell.tag];
-
 }
 
 @end

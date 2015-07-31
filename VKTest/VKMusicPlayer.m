@@ -5,18 +5,20 @@
 //  Created by Ольферук Александр on 30.07.15.
 //  Copyright (c) 2015 EnlightenedCSF. All rights reserved.
 //
-
-#import <AFNetworking.h>
+#import <STKAudioPlayer.h>
 
 #import "VKMusicPlayer.h"
 
 @interface VKMusicPlayer ()
 
-@property (strong, nonatomic) AVAudioPlayer *player;
+@property (strong, nonatomic) STKAudioPlayer *player;
+@property (assign, nonatomic) BOOL isReloading;
 
 @end
 
 @implementation VKMusicPlayer
+
+@synthesize playlist = _playlist;
 
 +(VKMusicPlayer *)sharedPlayer
 {
@@ -30,50 +32,131 @@
 
 -(id)init {
     if (self = [super init]) {
-        self.player = [AVAudioPlayer new];
+        self.player = [STKAudioPlayer new];
         self.playlist = [NSMutableArray array];
         self.index = -1;
+        self.isReloading = NO;
     }
     return self;
 }
 
+-(void)setPlaylist:(NSMutableArray *)playlist
+{
+    _playlist = playlist;
+    _isReloading = YES;
+}
+
+#pragma mark - 
+
+-(BOOL)playing
+{
+    return _player.state != STKAudioPlayerStatePaused;
+}
+
+-(BOOL)isSongIsPlayingAtIndex:(NSInteger)index
+{
+    return (int)index == _index;
+}
+
+-(Song *)getCurrentTrack
+{
+    if (_index < 0 || _index >= _playlist.count) {
+        return nil;
+    }
+    return _playlist[_index];
+}
+
+-(Song *)getTrackAtIndex:(NSInteger)index
+{
+    if (index < 0 || index >= _playlist.count) {
+        return nil;
+    }
+    return _playlist[index];
+
+}
+
+-(float)getCurrentSongProgress
+{
+    Song *song = [self getCurrentTrack];
+    double total = [song.duration doubleValue];
+    return (float)(_player.progress / total);    
+}
+
+-(void)playPause
+{
+    switch (_player.state) {
+        case STKAudioPlayerStatePlaying:
+        {
+            [_player pause];
+            break;
+        }
+        case STKAudioPlayerStatePaused:
+        {
+            [_player resume];
+            break;
+        }
+        default:
+            break;
+    }
+}
+
 -(void)togglePlayingAtIndex:(int)index
 {
-    if (self.index != index) { //then play it anyway
-        self.index = index;
-        
-        NSPredicate *p = [NSPredicate predicateWithFormat:@"index == %i", index];
-        
-        Song *s = [[self.playlist filteredArrayUsingPredicate:p] firstObject];
-        
-        if (s) {
-            AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-            
-            manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-            manager.responseSerializer = [AFHTTPResponseSerializer new];
-            
-            [manager GET:s.url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                
-                NSLog(@"%@", [responseObject class]);
-                
-                NSError *error;
-                self.player = [[AVAudioPlayer alloc] initWithData:responseObject error:&error];
-                [self.player prepareToPlay];
-                [self.player play];
-                
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                NSLog(@"%@", [error localizedDescription]);
-            }];
-        }
+    if (_index != index) // play it anyway
+    {
+        _index = index;
+        Song *s = _playlist[_index];
+        [_player playURL: [NSURL URLWithString:s.url]];
     }
     else {
-        if (self.player.playing) {
-            [self.player pause];
-        }
-        else {
-            
+        switch (_player.state) {
+            case STKAudioPlayerStatePlaying: {
+                [_player pause];
+                break;
+            }
+            case STKAudioPlayerStatePaused: {
+                if (_isReloading) {
+                    [self playCurrentSong];
+                    _isReloading = NO;
+                }
+                
+                [_player resume];
+                break;
+            }
+            default:
+                break;
         }
     }
+}
+
+-(void)switchTrackToNext
+{
+    if (_index == _playlist.count-1) {
+        return;
+    }
+    ++_index;
+    
+    if (_player.state == STKAudioPlayerStatePlaying) {
+        [self playCurrentSong];
+    }
+}
+
+-(void)switchTrackToPrevious
+{
+    if (_index == 0) {
+        return;
+    }
+    --_index;
+    
+    if (_player.state == STKAudioPlayerStatePlaying) {
+        [self playCurrentSong];
+    }
+}
+
+-(void)playCurrentSong
+{
+    Song *s = [self getCurrentTrack];
+    [_player playURL:[NSURL URLWithString:s.url]];
 }
 
 @end

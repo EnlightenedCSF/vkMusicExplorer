@@ -40,6 +40,7 @@
 @property (strong, nonatomic) UIPopoverController *aPopoverController;
 
 @property (assign, nonatomic) BOOL needsToReloadData;
+@property (copy, nonatomic) NSString *oldDomain;
 
 @end
 
@@ -74,10 +75,6 @@
     [self fetchAllSources];
     
     [self downloadNextPlaylist];
-    if (self.isFirstOne) {
-        [self downloadNextPlaylist];
-        self.isFirstOne = NO;
-    }
 }
 
 -(void)dealloc {
@@ -113,7 +110,6 @@
 {
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error)
      {
-         NSLog(@"Total playlists: %lu", (unsigned long)self.playlists.count);
          NSLog(@"%@", contextDidSave ? @"Did save all posts successfully!" : [error localizedDescription]);
          
          [self clearPlaylists];
@@ -127,7 +123,6 @@
 {
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error)
      {
-         NSLog(@"Total playlists: %lu", (unsigned long)self.playlists.count);
          NSLog(@"%@", contextDidSave ? @"Did save all posts successfully!" : [error localizedDescription]);
     }];
 }
@@ -151,14 +146,22 @@
         }
         else {
             [self.collectionView reloadData];
-            //[self setTimeLabel];
+            [self enableFavButtonIfNeeded];
             
-            //[self enableFavButtonIfNeeded];
+            [self downloadSecondIfNeeded];
         }
         
     } errorBlock:^(NSError *error) {
         NSLog(@"%@", [error description]);
     }];
+}
+
+-(void)downloadSecondIfNeeded
+{
+    if (self.isFirstOne) {
+        [self downloadNextPlaylist];
+        self.isFirstOne = NO;
+    }
 }
 
 -(VKRequest *)getRequestToNextPostInDomain:(NSString *)domain
@@ -329,7 +332,10 @@
 {
     if ([popoverController.contentViewController isKindOfClass:[SourceGroupTableViewController class]])
     {
-        [self reloadPosts];
+        NSString *newDomain = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectedDomain"];
+        if (!(_oldDomain && [_oldDomain isEqualToString:newDomain])) {
+            [self reloadPosts];
+        }
     }
 }
 
@@ -337,6 +343,8 @@
 
 - (IBAction)sourceSelectionTapped:(id)sender
 {
+    _oldDomain = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectedDomain"];
+    
     SourceGroupTableViewController* content = [[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:@"sourceSelection"];
     
     UIPopoverController* aPopover = [[UIPopoverController alloc]
@@ -350,32 +358,18 @@
     [self.aPopoverController presentPopoverFromRect:btn.frame inView:self.view permittedArrowDirections:(UIPopoverArrowDirectionAny) animated:YES];
 }
 
-- (IBAction)togglePlayer:(UIButton *)sender
-{
-    VKPlayerViewController* content = [[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:@"vkPlayerVC"];
-    
-    UIPopoverController* aPopover = [[UIPopoverController alloc]
-                                     initWithContentViewController:content];
-    aPopover.delegate = self;
-    
-    self.aPopoverController = aPopover;
-    
-    [self.aPopoverController presentPopoverFromRect:sender.frame inView:self.view permittedArrowDirections:(UIPopoverArrowDirectionAny) animated:YES];
-}
-
-
 - (IBAction)toggleFavoriteTapped:(UIButton *)sender
 {
     Playlist *playlist = self.playlists[self.currentPageIndex];
     playlist.isFavorite = @(![playlist.isFavorite boolValue]);
     
-    [sender setImage:[UIImage imageNamed: (playlist.isFavorite ? @"icon_heart" : @"icon_heart_empty")] forState:UIControlStateNormal];
+    [sender setImage:[UIImage imageNamed: ([playlist.isFavorite boolValue] ? @"icon_heart" : @"icon_heart_empty")] forState:UIControlStateNormal];
 }
 
 -(void)enableFavButtonIfNeeded
 {
     Playlist *playlist = self.playlists[self.currentPageIndex];
-    [_favBtn setImage:[UIImage imageNamed: (playlist.isFavorite ? @"icon_heart" : @"icon_heart_empty")] forState:UIControlStateNormal];
+    [_favBtn setImage:[UIImage imageNamed: ([playlist.isFavorite boolValue] ? @"icon_heart" : @"icon_heart_empty")] forState:UIControlStateNormal];
 }
 
 #pragma mark - VK Delegate

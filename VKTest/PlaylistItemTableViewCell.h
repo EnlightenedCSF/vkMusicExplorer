@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "Song.h"
+
 @protocol VKPlaylistProtocol <NSObject>
 
 -(void)onPlayPauseBtnTapped:(id)sender;
@@ -24,8 +26,9 @@
 
 @property (assign, nonatomic) BOOL isPlaying;
 
-
 -(void)fillWithTitle:(NSString *)title duration:(int)duration;
+-(void)fillWithSong:(Song *)song;
+
 -(void)hideDetails;
 
 @end

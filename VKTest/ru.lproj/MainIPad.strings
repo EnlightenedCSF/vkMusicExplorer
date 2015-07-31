@@ -1,0 +1,60 @@
+
+/* Class = "UITextView"; text = "Artist description"; ObjectID = "01s-Fk-dAY"; */
+"01s-Fk-dAY.text" = "Artist description";
+
+/* Class = "UITabBarItem"; title = "Player"; ObjectID = "0ip-6X-2jo"; */
+"0ip-6X-2jo.title" = "Плеер";
+
+/* Class = "UITabBarItem"; title = "Favorites"; ObjectID = "86H-tK-2k6"; */
+"86H-tK-2k6.title" = "Избранное";
+
+/* Class = "UITextView"; text = "Song Lyrics"; ObjectID = "9X0-1e-UBQ"; */
+"9X0-1e-UBQ.text" = "Слова песни";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "GP7-YP-mWK"; */
+"GP7-YP-mWK.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "Hk7-Jy-iDu"; */
+"Hk7-Jy-iDu.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "IUL-MA-TaU"; */
+"IUL-MA-TaU.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "MaO-nb-uti"; */
+"MaO-nb-uti.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "TUA-gQ-7K0"; */
+"TUA-gQ-7K0.text" = "Label";
+
+/* Class = "UILabel"; text = "Choose groups to fetch music from"; ObjectID = "Ywk-cz-afO"; */
+"Ywk-cz-afO.text" = "Выберите музыкальные страницы:";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "Zll-vv-kxE"; */
+"Zll-vv-kxE.text" = "Label";
+
+/* Class = "UITabBarItem"; title = "Explorer"; ObjectID = "eE9-oa-B6t"; */
+"eE9-oa-B6t.title" = "Найти";
+
+/* Class = "UIButton"; normalTitle = "Done"; ObjectID = "jyR-28-d7l"; */
+"jyR-28-d7l.normalTitle" = "Готово";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "nLz-rA-Ahh"; */
+"nLz-rA-Ahh.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "nj3-ER-6st"; */
+"nj3-ER-6st.text" = "Label";
+
+/* Class = "UILabel"; text = "-"; ObjectID = "og7-yi-dgE"; */
+"og7-yi-dgE.text" = "-";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "qBb-Z6-RkP"; */
+"qBb-Z6-RkP.text" = "Label";
+
+/* Class = "UILabel"; text = "-"; ObjectID = "tm5-CQ-DVe"; */
+"tm5-CQ-DVe.text" = "-";
+
+/* Class = "UIButton"; normalTitle = "Группы"; ObjectID = "uBr-hF-fIp"; */
+"uBr-hF-fIp.normalTitle" = "Источник";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "xv8-Vp-MUy"; */
+"xv8-Vp-MUy.text" = "Title";

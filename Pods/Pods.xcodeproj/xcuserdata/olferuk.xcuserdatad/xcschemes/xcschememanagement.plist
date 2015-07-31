@@ -9,6 +9,16 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>KissXML.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>LastFm.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>MagicalRecord.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -29,6 +39,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>StreamingKit.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>VK-ios-sdk.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -37,7 +52,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>054CD77C2072038C3AC1F01AA719877E</key>
+		<key>143D9B24B4AFB0130149A50AD3EE0A5B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>1D392E74BD754C8A92DD2BD2B721AE8D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>206004686EAEF4C3883FB9AD90E4420A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2BD44D5952011A4846AA4DF822AA6EFC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -47,12 +77,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>922E597F6B88BD7008ED5C66923345B6</key>
+		<key>5D10219406D4D202B68E7B101A5FC415</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>DF235F0712FB28D5AA03DA0C7E434019</key>
+		<key>A947FA1F8AE9D5FA293B554CD2335242</key>
 		<dict>
 			<key>primary</key>
 			<true/>

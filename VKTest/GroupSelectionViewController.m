@@ -75,9 +75,11 @@
         
         _sharedData.userId = response.json[0][@"id"];
         
-        VKRequest *req = [[VKApi users] getSubscriptions:@{ @"user_id":  _sharedData.userId,
-                                                            @"extended": @"1",
-                                                            @"fields":   @"name,photo_50" }];
+        VKRequest *req = [VKRequest requestWithMethod:@"groups.get" andParameters:@{
+                                                                                    @"used_id": _sharedData.userId,
+                                                                                    @"extended": @"1"
+                                                                                    } andHttpMethod:@"GET"];
+        
         [req executeWithResultBlock:^(VKResponse *response) {
             [self parseGroups:response.json];
             
@@ -95,11 +97,17 @@
 {
     NSMutableArray *res = [NSMutableArray array];
     for (id item_ in json[@"items"]) {
-        [res addObject:[NSMutableDictionary dictionaryWithDictionary:
-                        @{ @"icon": item_[@"photo_50"],
-                           @"name": item_[@"name"],
-                           @"domain": item_[@"screen_name"],
-                           @"selected": @(NO) }]];
+        if ([item_ objectForKey:@"screen_name"]) {
+            
+            [res addObject:[NSMutableDictionary dictionaryWithDictionary:
+                            @{ @"icon": item_[@"photo_50"],
+                               @"name": ([item_ objectForKey:@"name"] ?
+                                         item_[@"name"] :
+                                         [NSString stringWithFormat:@"%@ %@", item_[@"first_name"], item_[@"second_name"]]
+                                         ),
+                               @"domain": item_[@"screen_name"],
+                               @"selected": @(NO) }]];
+        }
     }
     self.groups = [res copy];
     [self.tableView reloadData];
@@ -118,7 +126,7 @@
     
     NSDictionary *item = self.groups[indexPath.row];
 
-    [cell fillWithName:item[@"name"] andImageUrlString:item[@"icon"]];
+    [cell fillWithName:item[@"name"] imageUrlString:item[@"icon"] isOn:[item[@"selected"] boolValue]];
     
     return cell;
 }

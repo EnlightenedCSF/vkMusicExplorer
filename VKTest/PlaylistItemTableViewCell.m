@@ -7,15 +7,34 @@
 //
 
 #import "PlaylistItemTableViewCell.h"
+#import "UILabel+Boldify.h"
 
 @implementation PlaylistItemTableViewCell
 
+@synthesize isPlaying = _isPlaying;
+
 -(void) fillWithTitle:(NSString *)title duration:(int)duration {
     [self showDetails];
-    self.isPlaying = NO;
+    [self setIsPlaying:NO];
     
     self.songTitleLabel.text = title;
+
+    [self setDuration:duration];
+}
+
+-(void)fillWithSong:(Song *)song
+{
+    [self showDetails];
+    [self setIsPlaying:NO];
     
+    _songTitleLabel.text = [NSString stringWithFormat:@"%@ - %@", song.artist, song.title];
+    [_songTitleLabel boldSubstring:song.artist];
+    
+    [self setDuration:[song.duration intValue]];
+}
+
+-(void)setDuration:(int)duration
+{
     int mins = duration / 60;
     int secs = duration % 60;
     NSString *sec;
@@ -41,10 +60,16 @@
 
 }
 
+-(void)setIsPlaying:(BOOL)isPlaying
+{
+    _isPlaying = isPlaying;
+    [_playPauseBtn setImage:[UIImage imageNamed:(_isPlaying ? @"icon_pause" : @"icon_play")] forState:(UIControlStateNormal)];
+}
+
 - (IBAction)playPauseBtnTapped:(UIButton *)sender
 {
-    self.isPlaying = !self.isPlaying;
-    [self.playPauseBtn setImage:[UIImage imageNamed:(self.isPlaying ? @"icon_pause" : @"icon_play")] forState:UIControlStateNormal];
+    _isPlaying = !_isPlaying;
+    [self setIsPlaying: _isPlaying];
     
     if ([_delegate respondsToSelector:@selector(onPlayPauseBtnTapped:)]) {
         [_delegate onPlayPauseBtnTapped:self];

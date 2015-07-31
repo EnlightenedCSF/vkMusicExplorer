@@ -1,0 +1,10 @@
+/* 
+  LocalizedStrings.strings
+  VKTest
+
+  Created by Ольферук Александр on 31.07.15.
+  Copyright (c) 2015 EnlightenedCSF. All rights reserved.
+*/
+"DONE" = "Готово";
+"PLAYCOUNT" = "воспроизведений";
+"CANT FIND LYRICS" = "\n\n\n\nСлова данной песни не найдены.";

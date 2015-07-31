@@ -20,9 +20,9 @@
 
 @implementation GroupSelectionTableViewCell
 
--(void)fillWithName:(NSString *)name andImageUrlString:(NSString *)url
+-(void)fillWithName:(NSString *)name imageUrlString:(NSString *)url isOn:(BOOL)isOn
 {
-    [self.isSelectedSwitch setOn:NO];
+    [self.isSelectedSwitch setOn:isOn];
     [self.icon sd_setImageWithURL:[NSURL URLWithString:url]];
     self.groupNameLabel.text = name;
 }

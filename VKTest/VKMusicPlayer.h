@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <AVFoundation/AVFoundation.h>
 
 #import "Song.h"
 
@@ -18,8 +17,19 @@
 @property (strong, nonatomic) NSMutableArray *playlist;
 @property (assign, nonatomic) int index;
 
+-(Song *)getCurrentTrack;
+-(Song *)getTrackAtIndex:(NSInteger)index;
+
+
+-(BOOL)playing;
+-(BOOL)isSongIsPlayingAtIndex:(NSInteger)index;
+
+-(void)playPause;
 -(void)togglePlayingAtIndex:(int)index;
 
-//-(void)song:(Song *)song isNowPlaying:(BOOL)isPlaying;
+-(float)getCurrentSongProgress;
+
+-(void)switchTrackToNext;
+-(void)switchTrackToPrevious;
 
 @end

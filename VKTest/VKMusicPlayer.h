@@ -10,12 +10,20 @@
 
 #import "Song.h"
 
+@protocol VKMusicPlayerProtocol <NSObject>
+
+-(void)needToSwitchToNextSong;
+
+@end
+
 @interface VKMusicPlayer : NSObject
 
 +(VKMusicPlayer *)sharedPlayer;
 
 @property (strong, nonatomic) NSMutableArray *playlist;
 @property (assign, nonatomic) int index;
+
+@property (weak, nonatomic) id<VKMusicPlayerProtocol> delegate;
 
 -(Song *)getCurrentTrack;
 -(Song *)getTrackAtIndex:(NSInteger)index;
@@ -29,7 +37,7 @@
 
 -(float)getCurrentSongProgress;
 
--(void)switchTrackToNext;
--(void)switchTrackToPrevious;
+-(BOOL)switchTrackToNext;
+-(BOOL)switchTrackToPrevious;
 
 @end

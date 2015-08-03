@@ -34,7 +34,8 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0) {
-        return tableView.bounds.size.height - DEFAULT_ROW_HEIGHT * MAX_PLAYLIST_SIZE;
+        CGFloat height = tableView.bounds.size.height - DEFAULT_ROW_HEIGHT * MAX_PLAYLIST_SIZE;
+        return height;
     }
     return DEFAULT_ROW_HEIGHT;
 }
@@ -57,7 +58,7 @@
     if (indexPath.section == 0) {
         PlaylistHeaderTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"playlistHeaderCell"];
         
-        [cell fill:self.playlistData.photoUrl andTime:self.playlistData.date];
+        [cell fill:_playlistData];
         
         return cell;
     }

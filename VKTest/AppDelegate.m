@@ -17,6 +17,9 @@
 #import <VKSdk.h>
 #import <LastFm.h>
 
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
+
 @interface AppDelegate () <VKSdkDelegate>
 
 @property (strong, nonatomic) VKUserData *sharedData;
@@ -34,17 +37,13 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [Fabric with:@[CrashlyticsKit]];
+    
     [MagicalRecord setupCoreDataStackWithStoreNamed:@"VKTest"];
     
     LastFm *lastFm = [LastFm sharedInstance];
     lastFm.apiKey    = @"3432d18ae7dc1fc6decf4a6411d419ac";
     lastFm.apiSecret = @"6a599f2293668cec9bbfa08e75eb50ea";
-    [lastFm getSessionForUser:@"Enlightened12" password:@"989592qq" successHandler:^(NSDictionary *result) {
-        lastFm.session = result[@"key"];
-        lastFm.username = result[@"name"];
-    } failureHandler:^(NSError *error) {
-        NSLog(@"%@", [error localizedDescription]);
-    }];
     
     _sharedData = [VKUserData sharedData];
     

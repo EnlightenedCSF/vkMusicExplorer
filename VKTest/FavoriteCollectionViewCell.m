@@ -10,6 +10,8 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import "FavoriteCollectionViewCell.h"
+#import "UIButton+FAWE.h"
+#import "VMEConsts.h"
 
 #define RADIANS(degrees) ((degrees * M_PI) / 180.0)
 #define LOW_BUDGET_INFINITY 99999
@@ -21,6 +23,14 @@
 @end
 
 @implementation FavoriteCollectionViewCell
+
+-(void)awakeFromNib
+{
+    [_deleteBtn setIconAlign:(FAWEButtonIconAlignCenter)];
+    [_deleteBtn setIconColor:[VMEConsts defaultRedColor]];
+    [_deleteBtn setIconSize:32];
+    [_deleteBtn setIcon:FAWEIconMinusSign];
+}
 
 -(void)fillWithPicUrl:(NSString *)picUrl
 {

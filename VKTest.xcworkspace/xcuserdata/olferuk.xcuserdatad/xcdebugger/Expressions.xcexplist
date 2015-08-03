@@ -3,6 +3,9 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "__40-[VKPlayerViewController loadArtistInfo]_block_invoke:VKPlayerViewController.m">
+      </ContextState>
+      <ContextState
          contextName = "-[GroupContentViewController parsePlaylist:andAddTo:]:GroupContentViewController.m">
          <PersistentStrings>
             <PersistentString
@@ -14,7 +17,15 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "__40-[VKPlayerViewController loadArtistInfo]_block_invoke:VKPlayerViewController.m">
+         contextName = "-[PlaylistHeaderTableViewCell fill:]:PlaylistHeaderTableViewCell.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "_postTextView.frame">
+            </PersistentString>
+            <PersistentString
+               value = "self.headerView">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "-[VKMusicPlayer togglePlayingAtIndex:]:VKMusicPlayer.m">
@@ -133,6 +144,17 @@
             </PersistentString>
             <PersistentString
                value = "anotherCell.tag">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[VKMusicPlayer audioPlayer:didFinishPlayingQueueItemId:withReason:andProgress:andDuration:]:VKMusicPlayer.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "duration">
+            </PersistentString>
+            <PersistentString
+               value = "progress">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

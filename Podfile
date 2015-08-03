@@ -11,6 +11,8 @@ target 'VKTest' do
     pod 'AFNetworking', '~> 2.5'
     pod 'StreamingKit', '~> 0.1'
     pod 'LastFm', '~> 1.15'
+    pod 'Fabric'
+    pod 'Crashlytics'
 end
 
 target 'VKTestTests' do

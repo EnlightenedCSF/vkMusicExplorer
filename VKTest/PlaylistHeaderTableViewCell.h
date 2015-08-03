@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+#import "Playlist.h"
+
 @interface PlaylistHeaderTableViewCell : UITableViewCell
 
--(void)fill:(NSString *)photoUrl andTime:(NSNumber *)time;
+-(void)fill:(Playlist *)playlist;
 
 @end

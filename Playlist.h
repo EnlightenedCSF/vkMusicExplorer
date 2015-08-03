@@ -2,7 +2,7 @@
 //  Playlist.h
 //  
 //
-//  Created by Ольферук Александр on 30.07.15.
+//  Created by Ольферук Александр on 03.08.15.
 //
 //
 
@@ -13,9 +13,11 @@
 
 @interface Playlist : NSManagedObject
 
+@property (nonatomic, retain) NSNumber * date;
 @property (nonatomic, retain) NSNumber * isFavorite;
 @property (nonatomic, retain) NSString * photoUrl;
-@property (nonatomic, retain) NSNumber * date;
+@property (nonatomic, retain) NSString * secondPhotoUrl;
+@property (nonatomic, retain) NSString * text;
 @property (nonatomic, retain) NSSet *songs;
 @property (nonatomic, retain) SourceGroup *source;
 @end

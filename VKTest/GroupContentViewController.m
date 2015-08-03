@@ -23,12 +23,14 @@
 #import "VKPlayerViewController.h"
 #import "VKUserData.h"
 
+#import "UIButton+FAWE.h"
+#import "VMEConsts.h"
+
 
 @interface GroupContentViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UIPopoverControllerDelegate, UITabBarControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 @property (weak, nonatomic) IBOutlet UIButton *favBtn;
-@property (weak, nonatomic) IBOutlet UILabel *timeLbl;
 
 @property (strong, nonatomic) NSMutableArray *playlists; //of Playlist
 
@@ -58,6 +60,11 @@
     self.currentOffset = 0;
     self.currentPageIndex = 0;
     self.tabBarController.delegate = self;
+    
+    [_favBtn setIconAlign:(FAWEButtonIconAlignCenter)];
+    [_favBtn setIconColor:[VMEConsts defaultRedColor]];
+    [_favBtn setIcon:(FAWEIconHeartEmpty)];
+    [_favBtn setIconSize:32];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(onVkSdkShouldPresentViewController:)
@@ -176,6 +183,7 @@
 -(BOOL)parsePlaylist:(NSDictionary *)json andAddTo:(NSMutableArray *)target
 {
     NSDictionary *item = json[@"items"][0];
+    NSString *text = item[@"text"];
     NSArray *attachments = item[@"attachments"];
     if (!attachments) {     //it's a repost
         NSDictionary *repost = item[@"copy_history"][0];
@@ -187,6 +195,8 @@
     
     BOOL wasAtLeastOneSong = NO;
     BOOL wasAtLeastOnePhoto = NO;
+    BOOL isSecondPhoto = NO;
+    
     NSString *videoFrameUrl;
     NSMutableDictionary *temp = [NSMutableDictionary dictionary];
     temp[@"songs"] = [NSMutableArray array];
@@ -197,8 +207,15 @@
     for (NSDictionary *attachment in attachments) {
         if ([attachment[@"type"] isEqualToString:@"photo"])
         {
-            temp[@"photoUrl"] = attachment[@"photo"][@"photo_604"];
             wasAtLeastOnePhoto = YES;
+            
+            if (isSecondPhoto) {
+                temp[@"secondPhotoUrl"] = attachment[@"photo"][@"photo_604"];
+            }
+            else {
+                temp[@"photoUrl"] = attachment[@"photo"][@"photo_604"];
+                isSecondPhoto = YES;
+            }
         }
         else if ([attachment[@"type"] isEqualToString:@"audio"]) {
             wasAtLeastOneSong = YES;
@@ -239,7 +256,11 @@
         else {
             Playlist *newPlaylist = [Playlist MR_createEntity];
             
+            newPlaylist.text = text;
             newPlaylist.photoUrl = temp[@"photoUrl"];
+            if ([temp objectForKey:@"secondPhotoUrl"]) {
+                newPlaylist.secondPhotoUrl = temp[@"secondPhotoUrl"];
+            }
             for (NSDictionary *item in temp[@"songs"]) {
                 Song *song = [Song MR_createEntity];
                 song.artist = item[@"artist"];
@@ -297,6 +318,7 @@
 {
     CGSize size = collectionView.bounds.size;
     size.height -= collectionView.contentInset.top + collectionView.contentInset.bottom + 5;
+        
     return size;
 }
 
@@ -363,13 +385,13 @@
     Playlist *playlist = self.playlists[self.currentPageIndex];
     playlist.isFavorite = @(![playlist.isFavorite boolValue]);
     
-    [sender setImage:[UIImage imageNamed: ([playlist.isFavorite boolValue] ? @"icon_heart" : @"icon_heart_empty")] forState:UIControlStateNormal];
+    [self enableFavButtonIfNeeded];
 }
 
 -(void)enableFavButtonIfNeeded
 {
     Playlist *playlist = self.playlists[self.currentPageIndex];
-    [_favBtn setImage:[UIImage imageNamed: ([playlist.isFavorite boolValue] ? @"icon_heart" : @"icon_heart_empty")] forState:UIControlStateNormal];
+    [_favBtn setIcon:([playlist.isFavorite boolValue] ? FAWEIconHeart : FAWEIconHeartEmpty )];
 }
 
 #pragma mark - VK Delegate

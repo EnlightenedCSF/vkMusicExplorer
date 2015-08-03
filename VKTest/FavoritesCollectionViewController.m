@@ -62,6 +62,7 @@ static NSString * const reuseIdentifier = @"favCell";
     Playlist *playlist = self.playlists[indexPath.row];
     [cell fillWithPicUrl:playlist.photoUrl];
     
+    // Todo: touch begin touch end instead of this
     UILongPressGestureRecognizer *longTap = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onStartEditing:)];
     longTap.minimumPressDuration = .5;
     longTap.delaysTouchesBegan = YES;
@@ -88,6 +89,23 @@ static NSString * const reuseIdentifier = @"favCell";
     return CGSizeMake(145, 140);
 }
 
+#pragma mark - Gestures
+
+-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return YES;
+}
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    NSLog(@"touch began");
+}
+
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    NSLog(@"touch ended");
+}
+	
 #pragma mark - Editing
 
 -(void)onStartEditing:(UILongPressGestureRecognizer *)gestureRecognizer

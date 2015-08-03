@@ -13,14 +13,17 @@
 #import "PlaylistItemTableViewCell.h"
 
 #import "VKMusicPlayer.h"
+#import "VMEConsts.h"
 
 #import "MusiXmatchService.h"
 #import "Track.h"
 #import "Artist.h"
 
+#import "UIButton+FAWE.h"
+
 #define MAX_PLAYLIST_SIZE 9
 
-@interface VKPlayerViewController () <UITableViewDataSource, UITableViewDelegate, VKPlaylistProtocol>
+@interface VKPlayerViewController () <UITableViewDataSource, UITableViewDelegate, VKPlaylistProtocol, VKMusicPlayerProtocol>
 
 @property (weak, nonatomic) IBOutlet UILabel *artistLabel;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
@@ -28,6 +31,8 @@
 @property (strong, nonatomic) NSTimer *timer;
 
 @property (weak, nonatomic) IBOutlet UIButton *playPauseBtn;
+@property (weak, nonatomic) IBOutlet UIButton *rewindBtn;
+@property (weak, nonatomic) IBOutlet UIButton *forwardBtn;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
@@ -36,7 +41,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *artistNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *artistTagsLabel;
 @property (weak, nonatomic) IBOutlet UILabel *artistListenersLabel;
-@property (weak, nonatomic) IBOutlet UITextView *artistSummaryTextView;
+
+@property (weak, nonatomic) IBOutlet UITextView *artistSumaryTextView;
+
 @property (weak, nonatomic) IBOutlet UIImageView *artistPortraitView;
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *lastFmProgressIndicator;
@@ -51,7 +58,22 @@
     [super viewDidLoad];
     
     _player = [VKMusicPlayer sharedPlayer];
+    
+    [_rewindBtn setIconAlign:(FAWEButtonIconAlignCenter)];
+    [_rewindBtn setIconColor:[VMEConsts defaultBlueColor]];
+    [_rewindBtn setIcon:(FAWEIconStepBackward)];
+    [_rewindBtn setIconSize:32];
+
+    [_forwardBtn setIconAlign:(FAWEButtonIconAlignCenter)];
+    [_forwardBtn setIconColor:[VMEConsts defaultBlueColor]];
+    [_forwardBtn setIcon:(FAWEIconStepForward)];
+    [_forwardBtn setIconSize:32];
+    
+    [_playPauseBtn setIconAlign:(FAWEButtonIconAlignCenter)];
+    [_playPauseBtn setIconColor:[VMEConsts defaultBlueColor]];
+    [_playPauseBtn setIconSize:40];
 }
+
 
 -(void)viewWillAppear:(BOOL)animated
 {
@@ -61,6 +83,8 @@
     [self refreshCurrentTrackInfo];
     
     [self loadArtistInfo];
+    
+    _player.delegate = self;
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -83,7 +107,7 @@
     }
     self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateProgressBar) userInfo:nil repeats:YES];
         
-    [_playPauseBtn setImage:[UIImage imageNamed:([_player playing] ? @"icon_pause_big" : @"icon_play_big")] forState:(UIControlStateNormal)];
+    [_playPauseBtn setIcon:([_player playing] ? FAWEIconPause : FAWEIconPlay)];
 }
 
 -(void)updateProgressBar
@@ -141,7 +165,7 @@
 - (IBAction)btnPlayPauseTapped:(UIButton *)sender
 {
     [_player playPause];
-    [_playPauseBtn setImage:[UIImage imageNamed:([_player playing] ? @"icon_pause_big" : @"icon_play_big")] forState:(UIControlStateNormal)];
+    [_playPauseBtn setIcon:([_player playing] ? FAWEIconPause : FAWEIconPlay)];
 }
 
 - (IBAction)btnForwardTapped:(id)sender
@@ -172,17 +196,11 @@
 {
     PlaylistItemTableViewCell *cell = (PlaylistItemTableViewCell *)sender;
 
-    for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:0]; ++i) {
-        PlaylistItemTableViewCell *anotherCell = (PlaylistItemTableViewCell *)[_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
-        if (anotherCell.tag == cell.tag) {
-            continue;
-        }
-        [anotherCell setIsPlaying:NO];
-    }
-    
     [_player togglePlayingAtIndex:(int)cell.tag];
     [self refreshCurrentTrackInfo];
     [self loadArtistInfo];
+    
+    [self updateTable];
 }
 
 #pragma mark - LastFM & MusiXMatch Stuff
@@ -209,7 +227,7 @@
 {
     _artistNameLabel.hidden = YES;
     _artistTagsLabel.hidden = YES;
-    _artistSummaryTextView.hidden = YES;
+    _artistSumaryTextView.hidden = YES;
     _artistListenersLabel.hidden = YES;
     _artistPortraitView.hidden = YES;
     [_lastFmProgressIndicator startAnimating];
@@ -219,7 +237,7 @@
 {
     _artistNameLabel.hidden = NO;
     _artistTagsLabel.hidden = NO;
-    _artistSummaryTextView.hidden = NO;
+    _artistSumaryTextView.hidden = NO;
     _artistListenersLabel.hidden = NO;
     _artistPortraitView.hidden = NO;
     [_lastFmProgressIndicator stopAnimating];
@@ -259,7 +277,12 @@
         _artistPortraitView.contentMode = UIViewContentModeScaleAspectFit;
         [_artistPortraitView sd_setImageWithURL:result[@"image"]];
         
-        _artistSummaryTextView.text = result[@"bio"];
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[result[@"summary"] dataUsingEncoding:NSUnicodeStringEncoding]
+                                                                                              options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType }
+                                                                                   documentAttributes:nil
+                                                                                                error:nil];
+        
+        _artistSumaryTextView.attributedText = attributedString;
         
     } failureHandler:^(NSError *error) {
         NSLog(@"%@", [error localizedDescription]);
@@ -283,6 +306,26 @@
     
     NSString *lyrics = [service getLyricsOfArtist:track.artist.name track:track.name];
     _songLyrics.text = lyrics != nil ? lyrics : NSLocalizedString(@"CANT FIND LYRICS", nil);
+}
+
+#pragma mark - VKMusicPlayer Protocol
+
+-(BOOL)isShowingArtistInfo
+{
+    return _songLyrics.hidden;
+}
+
+-(void)needToSwitchToNextSong
+{
+    if ([self isShowingArtistInfo]) {
+        [self loadArtistInfo];
+    }
+    else {
+        [self loadLyrics];
+    }
+    
+    [self refreshCurrentTrackInfo];
+    [self updateTable];
 }
 
 @end

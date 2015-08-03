@@ -8,10 +8,19 @@
 
 #import "PlaylistItemTableViewCell.h"
 #import "UILabel+Boldify.h"
+#import "VMEConsts.h"
+
+#import "UIButton+FAWE.h"
 
 @implementation PlaylistItemTableViewCell
 
 @synthesize isPlaying = _isPlaying;
+
+-(void)awakeFromNib {
+    [_playPauseBtn setIconAlign:(FAWEButtonIconAlignCenter)];
+    [_playPauseBtn setIconColor:[VMEConsts defaultBlueColor]];
+    [_playPauseBtn setIconSize:32];
+}
 
 -(void) fillWithTitle:(NSString *)title duration:(int)duration {
     [self showDetails];
@@ -63,7 +72,7 @@
 -(void)setIsPlaying:(BOOL)isPlaying
 {
     _isPlaying = isPlaying;
-    [_playPauseBtn setImage:[UIImage imageNamed:(_isPlaying ? @"icon_pause" : @"icon_play")] forState:(UIControlStateNormal)];
+    [_playPauseBtn setIcon:(_isPlaying ? FAWEIconPause : FAWEIconPlay)];
 }
 
 - (IBAction)playPauseBtnTapped:(UIButton *)sender

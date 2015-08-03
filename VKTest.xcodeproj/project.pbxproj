@@ -28,8 +28,17 @@
 		C28FA3DA1B6A3C6300BA682B /* icon_pause_big.png in Resources */ = {isa = PBXBuildFile; fileRef = C28FA3D81B6A3C6300BA682B /* icon_pause_big.png */; };
 		C28FA3DB1B6A3C6300BA682B /* icon_play_big.png in Resources */ = {isa = PBXBuildFile; fileRef = C28FA3D91B6A3C6300BA682B /* icon_play_big.png */; };
 		C28FA3DE1B6A3EB900BA682B /* VKPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C28FA3DD1B6A3EB900BA682B /* VKPlayerViewController.m */; };
-		C28FA3E91B6A61BC00BA682B /* Playlist.m in Sources */ = {isa = PBXBuildFile; fileRef = C28FA3E61B6A61BC00BA682B /* Playlist.m */; };
 		C28FA3EA1B6A61BC00BA682B /* Song.m in Sources */ = {isa = PBXBuildFile; fileRef = C28FA3E81B6A61BC00BA682B /* Song.m */; };
+		C29056AB1B6F571E001CDBA0 /* FAWEButtonSpecs.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056A01B6F571E001CDBA0 /* FAWEButtonSpecs.m */; };
+		C29056AC1B6F571E001CDBA0 /* FAWEIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056A21B6F571E001CDBA0 /* FAWEIconView.m */; };
+		C29056AD1B6F571E001CDBA0 /* FAWETickButton.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056A41B6F571E001CDBA0 /* FAWETickButton.m */; };
+		C29056AE1B6F571E001CDBA0 /* NSString+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056A61B6F571E001CDBA0 /* NSString+FontAwesome.m */; };
+		C29056AF1B6F571E001CDBA0 /* UIButton+FAWE.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056A81B6F571E001CDBA0 /* UIButton+FAWE.m */; };
+		C29056B01B6F571E001CDBA0 /* UIFont+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056AA1B6F571E001CDBA0 /* UIFont+FontAwesome.m */; };
+		C29056B21B6F5731001CDBA0 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C29056B11B6F5731001CDBA0 /* FontAwesome.ttf */; };
+		C29056B51B6F5E6D001CDBA0 /* VKTabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056B41B6F5E6D001CDBA0 /* VKTabBarViewController.m */; };
+		C29056B81B6F61E2001CDBA0 /* VMEConsts.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056B71B6F61E2001CDBA0 /* VMEConsts.m */; };
+		C29056C31B6F8F57001CDBA0 /* Playlist.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056C21B6F8F57001CDBA0 /* Playlist.m */; };
 		C296F2301B6B6A0A006067F0 /* UILabel+Boldify.m in Sources */ = {isa = PBXBuildFile; fileRef = C296F22F1B6B6A0A006067F0 /* UILabel+Boldify.m */; };
 		C296F2331B6B8628006067F0 /* icon_lyrics.png in Resources */ = {isa = PBXBuildFile; fileRef = C296F2311B6B8628006067F0 /* icon_lyrics.png */; };
 		C296F2341B6B8628006067F0 /* icon_singer.png in Resources */ = {isa = PBXBuildFile; fileRef = C296F2321B6B8628006067F0 /* icon_singer.png */; };
@@ -99,10 +108,27 @@
 		C28FA3D91B6A3C6300BA682B /* icon_play_big.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_play_big.png; sourceTree = "<group>"; };
 		C28FA3DC1B6A3EB900BA682B /* VKPlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VKPlayerViewController.h; sourceTree = "<group>"; };
 		C28FA3DD1B6A3EB900BA682B /* VKPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VKPlayerViewController.m; sourceTree = "<group>"; };
-		C28FA3E51B6A61BC00BA682B /* Playlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Playlist.h; sourceTree = "<group>"; };
-		C28FA3E61B6A61BC00BA682B /* Playlist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Playlist.m; sourceTree = "<group>"; };
 		C28FA3E71B6A61BC00BA682B /* Song.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Song.h; sourceTree = "<group>"; };
 		C28FA3E81B6A61BC00BA682B /* Song.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Song.m; sourceTree = "<group>"; };
+		C290569F1B6F571E001CDBA0 /* FAWEButtonSpecs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAWEButtonSpecs.h; sourceTree = "<group>"; };
+		C29056A01B6F571E001CDBA0 /* FAWEButtonSpecs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAWEButtonSpecs.m; sourceTree = "<group>"; };
+		C29056A11B6F571E001CDBA0 /* FAWEIconView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAWEIconView.h; sourceTree = "<group>"; };
+		C29056A21B6F571E001CDBA0 /* FAWEIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAWEIconView.m; sourceTree = "<group>"; };
+		C29056A31B6F571E001CDBA0 /* FAWETickButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAWETickButton.h; sourceTree = "<group>"; };
+		C29056A41B6F571E001CDBA0 /* FAWETickButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAWETickButton.m; sourceTree = "<group>"; };
+		C29056A51B6F571E001CDBA0 /* NSString+FontAwesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FontAwesome.h"; sourceTree = "<group>"; };
+		C29056A61B6F571E001CDBA0 /* NSString+FontAwesome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FontAwesome.m"; sourceTree = "<group>"; };
+		C29056A71B6F571E001CDBA0 /* UIButton+FAWE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+FAWE.h"; sourceTree = "<group>"; };
+		C29056A81B6F571E001CDBA0 /* UIButton+FAWE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+FAWE.m"; sourceTree = "<group>"; };
+		C29056A91B6F571E001CDBA0 /* UIFont+FontAwesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+FontAwesome.h"; sourceTree = "<group>"; };
+		C29056AA1B6F571E001CDBA0 /* UIFont+FontAwesome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+FontAwesome.m"; sourceTree = "<group>"; };
+		C29056B11B6F5731001CDBA0 /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.ttf; sourceTree = "<group>"; };
+		C29056B31B6F5E6D001CDBA0 /* VKTabBarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VKTabBarViewController.h; sourceTree = "<group>"; };
+		C29056B41B6F5E6D001CDBA0 /* VKTabBarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VKTabBarViewController.m; sourceTree = "<group>"; };
+		C29056B61B6F61E2001CDBA0 /* VMEConsts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMEConsts.h; sourceTree = "<group>"; };
+		C29056B71B6F61E2001CDBA0 /* VMEConsts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMEConsts.m; sourceTree = "<group>"; };
+		C29056C11B6F8F57001CDBA0 /* Playlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Playlist.h; sourceTree = "<group>"; };
+		C29056C21B6F8F57001CDBA0 /* Playlist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Playlist.m; sourceTree = "<group>"; };
 		C296F22E1B6B6A0A006067F0 /* UILabel+Boldify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+Boldify.h"; sourceTree = "<group>"; };
 		C296F22F1B6B6A0A006067F0 /* UILabel+Boldify.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+Boldify.m"; sourceTree = "<group>"; };
 		C296F2311B6B8628006067F0 /* icon_lyrics.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_lyrics.png; sourceTree = "<group>"; };
@@ -250,6 +276,8 @@
 				C29C90771B68E78B00132ADF /* FavoritesCollectionViewController.m */,
 				C28FA3DC1B6A3EB900BA682B /* VKPlayerViewController.h */,
 				C28FA3DD1B6A3EB900BA682B /* VKPlayerViewController.m */,
+				C29056B31B6F5E6D001CDBA0 /* VKTabBarViewController.h */,
+				C29056B41B6F5E6D001CDBA0 /* VKTabBarViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -258,6 +286,7 @@
 			isa = PBXGroup;
 			children = (
 				84A8CDC51B6510B20001A977 /* Images.xcassets */,
+				C29056B11B6F5731001CDBA0 /* FontAwesome.ttf */,
 				C296F2311B6B8628006067F0 /* icon_lyrics.png */,
 				C296F2321B6B8628006067F0 /* icon_singer.png */,
 				C28FA3D81B6A3C6300BA682B /* icon_pause_big.png */,
@@ -285,6 +314,8 @@
 				C29C906E1B68C54000132ADF /* VKUserData.m */,
 				C28FA3D11B6A369F00BA682B /* VKMusicPlayer.h */,
 				C28FA3D21B6A369F00BA682B /* VKMusicPlayer.m */,
+				C29056B61B6F61E2001CDBA0 /* VMEConsts.h */,
+				C29056B71B6F61E2001CDBA0 /* VMEConsts.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -314,6 +345,25 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
+		C290569E1B6F5702001CDBA0 /* FAWE */ = {
+			isa = PBXGroup;
+			children = (
+				C290569F1B6F571E001CDBA0 /* FAWEButtonSpecs.h */,
+				C29056A01B6F571E001CDBA0 /* FAWEButtonSpecs.m */,
+				C29056A11B6F571E001CDBA0 /* FAWEIconView.h */,
+				C29056A21B6F571E001CDBA0 /* FAWEIconView.m */,
+				C29056A31B6F571E001CDBA0 /* FAWETickButton.h */,
+				C29056A41B6F571E001CDBA0 /* FAWETickButton.m */,
+				C29056A51B6F571E001CDBA0 /* NSString+FontAwesome.h */,
+				C29056A61B6F571E001CDBA0 /* NSString+FontAwesome.m */,
+				C29056A71B6F571E001CDBA0 /* UIButton+FAWE.h */,
+				C29056A81B6F571E001CDBA0 /* UIButton+FAWE.m */,
+				C29056A91B6F571E001CDBA0 /* UIFont+FontAwesome.h */,
+				C29056AA1B6F571E001CDBA0 /* UIFont+FontAwesome.m */,
+			);
+			name = FAWE;
+			sourceTree = "<group>";
+		};
 		C296F22D1B6B69AB006067F0 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
@@ -326,6 +376,7 @@
 		C296F2351B6B9729006067F0 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				C290569E1B6F5702001CDBA0 /* FAWE */,
 				C296F2361B6B973F006067F0 /* MusiXMatch */,
 			);
 			name = Libraries;
@@ -351,8 +402,8 @@
 		C29E80DB1B67994000755B16 /* DataModel */ = {
 			isa = PBXGroup;
 			children = (
-				C28FA3E51B6A61BC00BA682B /* Playlist.h */,
-				C28FA3E61B6A61BC00BA682B /* Playlist.m */,
+				C29056C11B6F8F57001CDBA0 /* Playlist.h */,
+				C29056C21B6F8F57001CDBA0 /* Playlist.m */,
 				C28FA3E71B6A61BC00BA682B /* Song.h */,
 				C28FA3E81B6A61BC00BA682B /* Song.m */,
 				C29E80FA1B67CBBA00755B16 /* SourceGroup.h */,
@@ -373,6 +424,7 @@
 				84A8CDAF1B6510B20001A977 /* Frameworks */,
 				84A8CDB01B6510B20001A977 /* Resources */,
 				865F7A28BC185F9D41E4E6E7 /* Copy Pods Resources */,
+				C29056C41B6FADF2001CDBA0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -454,6 +506,7 @@
 				84A8CDC91B6510B20001A977 /* LaunchScreen.xib in Resources */,
 				C29E80EE1B67BF7100755B16 /* icon_find.png in Resources */,
 				C296F2331B6B8628006067F0 /* icon_lyrics.png in Resources */,
+				C29056B21B6F5731001CDBA0 /* FontAwesome.ttf in Resources */,
 				C296F2341B6B8628006067F0 /* icon_singer.png in Resources */,
 				C29E80F31B67C13C00755B16 /* icon_favs2.png in Resources */,
 				84A8CDC61B6510B20001A977 /* Images.xcassets in Resources */,
@@ -505,6 +558,19 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VKTest/Pods-VKTest-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		C29056C41B6FADF2001CDBA0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/Fabric.framework/run\" 27611ac7248ae9601f06d78c3e35e2ea451f6ab4 cf44b255dcc8ca85fd743385b27f528a893706a3a03a549627f24af035a24c3c";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -512,26 +578,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C29056AE1B6F571E001CDBA0 /* NSString+FontAwesome.m in Sources */,
 				C296F2421B6B9751006067F0 /* MusiXmatchService.m in Sources */,
+				C29056AB1B6F571E001CDBA0 /* FAWEButtonSpecs.m in Sources */,
+				C29056AC1B6F571E001CDBA0 /* FAWEIconView.m in Sources */,
 				C296F2431B6B9751006067F0 /* NSString+Extensions.m in Sources */,
+				C29056AF1B6F571E001CDBA0 /* UIButton+FAWE.m in Sources */,
 				C28FA3DE1B6A3EB900BA682B /* VKPlayerViewController.m in Sources */,
 				C29C906F1B68C54000132ADF /* VKUserData.m in Sources */,
+				C29056B81B6F61E2001CDBA0 /* VMEConsts.m in Sources */,
 				84A8CDBE1B6510B20001A977 /* VKTest.xcdatamodeld in Sources */,
 				C2397B2C1B66523300B9AA2E /* PlaylistItemTableViewCell.m in Sources */,
 				C29C90781B68E78B00132ADF /* FavoritesCollectionViewController.m in Sources */,
 				84A8CDBB1B6510B20001A977 /* AppDelegate.m in Sources */,
 				C28FA3EA1B6A61BC00BA682B /* Song.m in Sources */,
-				C28FA3E91B6A61BC00BA682B /* Playlist.m in Sources */,
 				C28FA3D31B6A369F00BA682B /* VKMusicPlayer.m in Sources */,
 				84A8CDC11B6510B20001A977 /* GroupSelectionViewController.m in Sources */,
 				C29E80FE1B67CBBA00755B16 /* SourceGroup.m in Sources */,
 				84A8CDB81B6510B20001A977 /* main.m in Sources */,
+				C29056AD1B6F571E001CDBA0 /* FAWETickButton.m in Sources */,
 				C296F2441B6B9751006067F0 /* SZJsonParser.m in Sources */,
 				C296F2451B6B9751006067F0 /* Track.m in Sources */,
 				C2397B231B66414600B9AA2E /* GroupSelectionTableViewCell.m in Sources */,
 				C29E80D01B6766A000755B16 /* PlaylistCollectionViewCell.m in Sources */,
+				C29056C31B6F8F57001CDBA0 /* Playlist.m in Sources */,
+				C29056B01B6F571E001CDBA0 /* UIFont+FontAwesome.m in Sources */,
 				C296F2411B6B9751006067F0 /* Artist.m in Sources */,
 				C29E80D61B6774C100755B16 /* SourceGroupTableViewController.m in Sources */,
+				C29056B51B6F5E6D001CDBA0 /* VKTabBarViewController.m in Sources */,
 				C2397B261B664B8600B9AA2E /* GroupContentViewController.m in Sources */,
 				C296F2301B6B6A0A006067F0 /* UILabel+Boldify.m in Sources */,
 				C29C907B1B68EA8A00132ADF /* FavoriteCollectionViewCell.m in Sources */,

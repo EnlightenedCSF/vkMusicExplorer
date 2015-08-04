@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "Playlist.h"
+
 @protocol FavoriteCellEditingDelegate <NSObject>
 
 -(void)onDeleteCell:(id)sender;
@@ -20,7 +22,9 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *cover;
 
--(void)fillWithPicUrl:(NSString *)picUrl;
+-(void)fillWithPlaylist:(Playlist *)playlist;
 -(void)toggleEditing;
+
+-(void)setIsPlaying:(BOOL)isPlaying;
 
 @end

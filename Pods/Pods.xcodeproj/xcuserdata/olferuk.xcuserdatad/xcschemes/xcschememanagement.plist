@@ -24,6 +24,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>OBSlider.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-VKTest.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -62,27 +67,27 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5D10219406D4D202B68E7B101A5FC415</key>
+		<key>9F016888D96E66F6D1146C3A27003EED</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>606E96B4A42F8910C24AA804DC2E9493</key>
+		<key>A3ABAA99C046DDFB90951DB7AAEF6373</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>68F915B1298F3B5C6095D0C961966636</key>
+		<key>CAC1AB24716D6815479D8FE1B3F35C87</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>7739D7619FBE1189DF7D9E50CC096737</key>
+		<key>CE0BA81D35746C024D9509AC1F9E0A18</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>79DDF0AE420E8EC14FE17DE07A492BE3</key>
+		<key>D499402987FC34E8D97D50AF53582DFB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -93,6 +98,11 @@
 			<true/>
 		</dict>
 		<key>EE087B1527DEF4C6D6647AECA6DDE258</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F72C58DF6FA4F6B54BA22CD7588B72F8</key>
 		<dict>
 			<key>primary</key>
 			<true/>

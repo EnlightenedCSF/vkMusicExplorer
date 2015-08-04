@@ -15,11 +15,16 @@
 
 #import "FavoriteCollectionViewCell.h"
 
+#import "VKMusicPlayer.h"
+#import "VMEUtils.h"
+
 @interface FavoritesCollectionViewController () <UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, FavoriteCellEditingDelegate, UITabBarControllerDelegate>
 
 @property (strong, nonatomic) NSMutableArray *playlists;
 
 @property (assign, nonatomic) BOOL isInEditingMode;
+
+@property (strong, nonatomic) VKMusicPlayer *player;
 
 @end
 
@@ -29,6 +34,8 @@ static NSString * const reuseIdentifier = @"favCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _player = [VKMusicPlayer sharedPlayer];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -60,7 +67,7 @@ static NSString * const reuseIdentifier = @"favCell";
     FavoriteCollectionViewCell *cell = (FavoriteCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
     
     Playlist *playlist = self.playlists[indexPath.row];
-    [cell fillWithPicUrl:playlist.photoUrl];
+    [cell fillWithPlaylist:playlist];
     
     // Todo: touch begin touch end instead of this
     UILongPressGestureRecognizer *longTap = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onStartEditing:)];
@@ -79,7 +86,27 @@ static NSString * const reuseIdentifier = @"favCell";
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
-    // todo:
+    
+    if (_isInEditingMode) {
+        return;
+    }
+    
+    NSLog(@"Selected");
+    [self setOthersNotPlaying];
+    
+    FavoriteCollectionViewCell *cell = (FavoriteCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
+    [cell setIsPlaying:YES];
+    
+    [_player getDataFromPlaylist:_playlists[indexPath.row]];
+    [_player startPlayingFromBeginning];
+}
+
+-(void)setOthersNotPlaying
+{
+    for (NSInteger i = 0; i < [self.collectionView numberOfItemsInSection:0]; ++i) {
+        FavoriteCollectionViewCell *cell = (FavoriteCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
+        [cell setIsPlaying:NO];
+    }
 }
 
 #pragma mark - Collection View Flow Delegate
@@ -89,37 +116,19 @@ static NSString * const reuseIdentifier = @"favCell";
     return CGSizeMake(145, 140);
 }
 
-#pragma mark - Gestures
-
--(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-    return YES;
-}
-
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    NSLog(@"touch began");
-}
-
--(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    NSLog(@"touch ended");
-}
-	
 #pragma mark - Editing
 
 -(void)onStartEditing:(UILongPressGestureRecognizer *)gestureRecognizer
 {
-    NSLog(@"%ld", (long)gestureRecognizer.state);
     if (gestureRecognizer.state != UIGestureRecognizerStateEnded) {
         return;
     }
     
-    self.isInEditingMode = YES;
-    [self startWiggling];
+    self.isInEditingMode = !self.isInEditingMode;
+    [self toggleWiggling];
 }
 
--(void)startWiggling
+-(void)toggleWiggling
 {
     for (NSInteger i = 0; i < self.playlists.count; ++i)
     {
@@ -170,7 +179,6 @@ static NSString * const reuseIdentifier = @"favCell";
             [self stopEditing];
         }
         
-#warning Не успевает сохранить
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
             NSLog(@"Successfully saved from favorite VC");
         }];

@@ -11,7 +11,9 @@
 
 #import "FavoriteCollectionViewCell.h"
 #import "UIButton+FAWE.h"
+
 #import "VMEConsts.h"
+#import "VMEUtils.h"
 
 #define RADIANS(degrees) ((degrees * M_PI) / 180.0)
 #define LOW_BUDGET_INFINITY 99999
@@ -19,6 +21,8 @@
 @interface FavoriteCollectionViewCell ()
 
 @property (weak, nonatomic) IBOutlet UIButton *deleteBtn;
+@property (weak, nonatomic) IBOutlet UILabel *timeLbl;
+@property (weak, nonatomic) IBOutlet UIImageView *isPlayingImageView;
 
 @end
 
@@ -30,12 +34,17 @@
     [_deleteBtn setIconColor:[VMEConsts defaultRedColor]];
     [_deleteBtn setIconSize:32];
     [_deleteBtn setIcon:FAWEIconMinusSign];
+    
+    UIImage *img = [VMEUtils imageWithFAEnum:FAWEIconPlayCircle size:CGSizeMake(50, 50) color:[VMEConsts defaultBlueColor]];
+    [_isPlayingImageView setImage:img];
 }
 
--(void)fillWithPicUrl:(NSString *)picUrl
+-(void)fillWithPlaylist:(Playlist *)playlist
 {
     self.cover.contentMode = UIViewContentModeScaleAspectFit;
-    [self.cover sd_setImageWithURL:[NSURL URLWithString:picUrl]];
+    [self.cover sd_setImageWithURL:[NSURL URLWithString:playlist.photoUrl]];
+    
+    self.timeLbl.text = [VMEUtils dateStringFromDateStamp:[playlist.date doubleValue]];
     
     self.deleteBtn.hidden = YES;
     [self stopAnimating];
@@ -87,6 +96,11 @@
         UIImageView* image = (__bridge UIImageView *)context;
         image.transform = CGAffineTransformIdentity;
     }
+}
+
+-(void)setIsPlaying:(BOOL)isPlaying
+{
+    self.isPlayingImageView.hidden = !isPlaying;
 }
 
 @end

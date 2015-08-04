@@ -13,6 +13,7 @@
 #import "Song.h"
 
 #import "VKMusicPlayer.h"
+#import "VMEUtils.h"
 
 #define DEFAULT_ROW_HEIGHT 44
 #define MAX_PLAYLIST_SIZE 9
@@ -74,6 +75,13 @@
             cell.tag = [song.index intValue];
             
             cell.delegate = self;
+            
+            if ([self.playlistData.photoUrl isEqualToString:[VKMusicPlayer sharedPlayer].photoUrl] &&
+                [song.index intValue] == [VKMusicPlayer sharedPlayer].index &&
+                [[VKMusicPlayer sharedPlayer] playing])
+            {
+                [cell setIsPlaying:YES];
+            }
         }
         else {
             [cell hideDetails];
@@ -93,13 +101,6 @@
 -(void)onPlayPauseBtnTapped:(id)sender
 {
     PlaylistItemTableViewCell *cell = (PlaylistItemTableViewCell *)sender;
-
-    NSArray *arr = [[self.playlistData.songs mutableCopy] allObjects];
-    arr = [arr sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        Song *a = (Song *)obj1;
-        Song *b = (Song *)obj2;
-        return a.index > b.index;
-    }];
     
     for (NSInteger i = 0; i < [self.playlist numberOfRowsInSection:1]; ++i) {
         PlaylistItemTableViewCell *anotherCell = (PlaylistItemTableViewCell *)[_playlist cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:1]];
@@ -108,9 +109,8 @@
         }
         [anotherCell setIsPlaying:NO];
     }
-
-    [VKMusicPlayer sharedPlayer].playlist = [NSMutableArray arrayWithArray:arr];
-    
+        
+    [[VKMusicPlayer sharedPlayer] getDataFromPlaylist:self.playlistData];
     [[VKMusicPlayer sharedPlayer] togglePlayingAtIndex:(int)cell.tag];
 }
 

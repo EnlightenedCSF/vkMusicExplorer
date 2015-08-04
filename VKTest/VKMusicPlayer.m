@@ -42,10 +42,20 @@
     return self;
 }
 
--(void)setPlaylist:(NSMutableArray *)playlist
+-(void)getDataFromPlaylist:(Playlist *)playlist
 {
-    _playlist = playlist;
+    if (self.photoUrl && [self.photoUrl isEqualToString:playlist.photoUrl]) {
+        return;
+    }
+    
+    _playlist = [[[playlist.songs mutableCopy] allObjects] sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        Song *a = (Song *)obj1;
+        Song *b = (Song *)obj2;
+        return a.index > b.index;
+    }];
     _isReloading = YES;
+    
+    _photoUrl = playlist.photoUrl;
 }
 
 #pragma mark - 
@@ -84,6 +94,29 @@
     return (float)(_player.progress / total);    
 }
 
+-(NSString *)getCurrentSongProgressText
+{
+    Song *song = [self getCurrentTrack];
+    double duration = [song.duration doubleValue];
+    int min = floor(duration / 60.0);
+    int sec = (int)duration % 60;
+    NSString *total = [NSString stringWithFormat:(sec < 10 ? @"%d:0%d" : @"%d:%d"), min, sec];
+    
+    double progress = [_player progress];
+    min = floor(progress / 60.0);
+    sec = (int)progress % 60;
+    NSString *current = [NSString stringWithFormat:(sec < 10 ? @"%d:0%d" : @"%d:%d"), min, sec];
+    
+    return [NSString stringWithFormat:@"[ %@ / %@ ]", current, total];
+}
+
+-(void)startPlayingFromBeginning
+{
+    _index = 0;
+    _isReloading = NO;
+    [self playCurrentSong];
+}
+
 -(void)playPause
 {
     switch (_player.state) {
@@ -109,6 +142,9 @@
         _index = index;
         Song *s = _playlist[_index];
         [_player playURL: [NSURL URLWithString:s.url]];
+        if (_isReloading) {
+            _isReloading = NO;
+        }
     }
     else {
         switch (_player.state) {
@@ -121,8 +157,8 @@
                     [self playCurrentSong];
                     _isReloading = NO;
                 }
-                
-                [_player resume];
+                else
+                    [_player resume];
                 break;
             }
             default:
@@ -161,6 +197,12 @@
 {
     Song *s = [self getCurrentTrack];
     [_player playURL:[NSURL URLWithString:s.url]];
+}
+
+-(void)seekToPositionInCurrentSong:(float)position
+{
+    double time = _player.duration * position;
+    [_player seekToTime:time];
 }
 
 # pragma mark - STK Audio Player Delegate

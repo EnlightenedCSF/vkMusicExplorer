@@ -109,17 +109,13 @@ static MusiXmatchService *sharedInstance = nil;
 
 
 - (NSString*)getLyrics:(NSUInteger)lyricsId {
-	NSString *url = [[NSString alloc] initWithFormat:@"%@&lyrics_id=%lu",
-						[self baseUrl:LYRICS_GET], (unsigned long)lyricsId];
+	NSString *url = [[NSString alloc] initWithFormat:@"%@&track_id=%lu",
+						[self baseUrl:LYRICS_GET_TRACK], (unsigned long)lyricsId];
 	NSDictionary *body = [self performQuery:url];
 	if (!body) {
 		return nil;
 	}
-	NSArray *lyricsList = [body objectForKey:@"lyrics_list"];
-	if ([lyricsList count] == 0) {
-		return nil;
-	}
-	return [[[lyricsList objectAtIndex:0] objectForKey:@"lyrics"] objectForKey:@"lyrics_body"];
+	return [[body objectForKey:@"lyrics"] objectForKey:@"lyrics_body"];
 }
 
 - (NSString *)getLyricsOfArtist:(NSString *)artist track:(NSString *)track {

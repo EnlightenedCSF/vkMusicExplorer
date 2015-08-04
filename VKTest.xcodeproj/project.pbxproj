@@ -39,6 +39,7 @@
 		C29056B51B6F5E6D001CDBA0 /* VKTabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056B41B6F5E6D001CDBA0 /* VKTabBarViewController.m */; };
 		C29056B81B6F61E2001CDBA0 /* VMEConsts.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056B71B6F61E2001CDBA0 /* VMEConsts.m */; };
 		C29056C31B6F8F57001CDBA0 /* Playlist.m in Sources */ = {isa = PBXBuildFile; fileRef = C29056C21B6F8F57001CDBA0 /* Playlist.m */; };
+		C294CA501B70B789009FE7A5 /* VMEUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = C294CA4F1B70B789009FE7A5 /* VMEUtils.m */; };
 		C296F2301B6B6A0A006067F0 /* UILabel+Boldify.m in Sources */ = {isa = PBXBuildFile; fileRef = C296F22F1B6B6A0A006067F0 /* UILabel+Boldify.m */; };
 		C296F2331B6B8628006067F0 /* icon_lyrics.png in Resources */ = {isa = PBXBuildFile; fileRef = C296F2311B6B8628006067F0 /* icon_lyrics.png */; };
 		C296F2341B6B8628006067F0 /* icon_singer.png in Resources */ = {isa = PBXBuildFile; fileRef = C296F2321B6B8628006067F0 /* icon_singer.png */; };
@@ -129,6 +130,8 @@
 		C29056B71B6F61E2001CDBA0 /* VMEConsts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMEConsts.m; sourceTree = "<group>"; };
 		C29056C11B6F8F57001CDBA0 /* Playlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Playlist.h; sourceTree = "<group>"; };
 		C29056C21B6F8F57001CDBA0 /* Playlist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Playlist.m; sourceTree = "<group>"; };
+		C294CA4E1B70B789009FE7A5 /* VMEUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMEUtils.h; sourceTree = "<group>"; };
+		C294CA4F1B70B789009FE7A5 /* VMEUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMEUtils.m; sourceTree = "<group>"; };
 		C296F22E1B6B6A0A006067F0 /* UILabel+Boldify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+Boldify.h"; sourceTree = "<group>"; };
 		C296F22F1B6B6A0A006067F0 /* UILabel+Boldify.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+Boldify.m"; sourceTree = "<group>"; };
 		C296F2311B6B8628006067F0 /* icon_lyrics.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_lyrics.png; sourceTree = "<group>"; };
@@ -316,6 +319,8 @@
 				C28FA3D21B6A369F00BA682B /* VKMusicPlayer.m */,
 				C29056B61B6F61E2001CDBA0 /* VMEConsts.h */,
 				C29056B71B6F61E2001CDBA0 /* VMEConsts.m */,
+				C294CA4E1B70B789009FE7A5 /* VMEUtils.h */,
+				C294CA4F1B70B789009FE7A5 /* VMEUtils.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -464,6 +469,11 @@
 				TargetAttributes = {
 					84A8CDB11B6510B20001A977 = {
 						CreatedOnToolsVersion = 6.2;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					84A8CDCD1B6510B20001A977 = {
 						CreatedOnToolsVersion = 6.2;
@@ -609,6 +619,7 @@
 				C2397B261B664B8600B9AA2E /* GroupContentViewController.m in Sources */,
 				C296F2301B6B6A0A006067F0 /* UILabel+Boldify.m in Sources */,
 				C29C907B1B68EA8A00132ADF /* FavoriteCollectionViewCell.m in Sources */,
+				C294CA501B70B789009FE7A5 /* VMEUtils.m in Sources */,
 				C2397B291B66501E00B9AA2E /* PlaylistHeaderTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -749,7 +760,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -762,7 +773,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

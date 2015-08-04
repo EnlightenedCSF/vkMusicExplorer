@@ -19,6 +19,7 @@
 #define TRACK_GET @"track.get"
 #define TRACK_SEARCH @"track.search"
 #define LYRICS_GET @"lyrics.get"
+#define LYRICS_GET_TRACK @"track.lyrics.get"
 #define LYRICS_GET_MATCHER @"matcher.lyrics.get"
 
 @class Track;

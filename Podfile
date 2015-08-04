@@ -13,6 +13,7 @@ target 'VKTest' do
     pod 'LastFm', '~> 1.15'
     pod 'Fabric'
     pod 'Crashlytics'
+    pod 'OBSlider', '~> 1.1'
 end
 
 target 'VKTestTests' do

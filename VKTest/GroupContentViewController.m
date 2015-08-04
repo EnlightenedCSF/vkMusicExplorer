@@ -32,6 +32,10 @@
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 @property (weak, nonatomic) IBOutlet UIButton *favBtn;
 
+@property (weak, nonatomic) IBOutlet UIButton *prevPostsBtn;
+@property (weak, nonatomic) IBOutlet UIButton *nextPostsBtn;
+
+
 @property (strong, nonatomic) NSMutableArray *playlists; //of Playlist
 
 @property (assign, nonatomic) int currentOffset;
@@ -128,6 +132,9 @@
 
 -(void)savePlaylists
 {
+    // todo: save only unique posts
+    NSLog(@"Total playlists are: %lu", [Playlist MR_findAll].count);
+    
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error)
      {
          NSLog(@"%@", contextDidSave ? @"Did save all posts successfully!" : [error localizedDescription]);
@@ -236,6 +243,10 @@
     }
     
     if (!wasAtLeastOnePhoto) {
+        if (videoFrameUrl == nil) {
+            return NO;
+        }
+        
         temp[@"photoUrl"] = videoFrameUrl;
     }
     
@@ -318,7 +329,6 @@
 {
     CGSize size = collectionView.bounds.size;
     size.height -= collectionView.contentInset.top + collectionView.contentInset.bottom + 5;
-        
     return size;
 }
 
@@ -408,11 +418,20 @@
 {
     if (![viewController isKindOfClass:[self class]] ) {
         [self savePlaylists];
-        [self clearPlaylists];
         [self clearGroups];
-        self.isFirstOne = YES;
-        self.currentOffset = 0;
     }
+}
+
+#pragma mark - Rotation Support
+
+-(void)viewDidLayoutSubviews
+{
+    NSLog(@"Did rotate");
+    [super viewDidLayoutSubviews];
+    
+    [self.view layoutIfNeeded];
+    [self.view layoutSubviews];
+    [self.collectionView reloadData];
 }
 
 @end

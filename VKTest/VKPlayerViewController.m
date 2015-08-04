@@ -20,6 +20,7 @@
 #import "Artist.h"
 
 #import "UIButton+FAWE.h"
+#import <OBSlider.h>
 
 #define MAX_PLAYLIST_SIZE 9
 
@@ -27,12 +28,18 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *artistLabel;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
-@property (weak, nonatomic) IBOutlet UIProgressView *progressView;
+
+@property (weak, nonatomic) IBOutlet OBSlider *songProgress;
+@property (weak, nonatomic) IBOutlet UILabel *songProgressLabel;
+
 @property (strong, nonatomic) NSTimer *timer;
 
 @property (weak, nonatomic) IBOutlet UIButton *playPauseBtn;
 @property (weak, nonatomic) IBOutlet UIButton *rewindBtn;
 @property (weak, nonatomic) IBOutlet UIButton *forwardBtn;
+
+@property (weak, nonatomic) IBOutlet UIButton *artistInfoBtn;
+@property (weak, nonatomic) IBOutlet UIButton *lyricsBtn;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
@@ -40,6 +47,8 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *artistNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *artistTagsLabel;
+
+@property (weak, nonatomic) IBOutlet UILabel *artistPlaycountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *artistListenersLabel;
 
 @property (weak, nonatomic) IBOutlet UITextView *artistSumaryTextView;
@@ -72,6 +81,20 @@
     [_playPauseBtn setIconAlign:(FAWEButtonIconAlignCenter)];
     [_playPauseBtn setIconColor:[VMEConsts defaultBlueColor]];
     [_playPauseBtn setIconSize:40];
+    
+    [_artistInfoBtn setIconAlign:(FAWEButtonIconAlignCenter)];
+    [_artistInfoBtn setIconColor:[VMEConsts defaultGrayColor]];
+    [_artistInfoBtn setIcon:(FAWEIconUser)];
+    [_artistInfoBtn setIconSize:32];
+    
+    [_lyricsBtn setIconAlign:(FAWEButtonIconAlignCenter)];
+    [_lyricsBtn setIconColor:[VMEConsts defaultGrayColor]];
+    [_lyricsBtn setIcon:(FAWEIconFont)];
+    [_lyricsBtn setIconSize:32];
+    
+    [_songProgress addTarget:self action:@selector(songProgressBeganChangingByUser) forControlEvents:(UIControlEventTouchDown)];
+    
+    [_songProgress addTarget:self action:@selector(songProgressTouchEnded) forControlEvents:(UIControlEventTouchUpInside | UIControlEventTouchUpOutside)];
 }
 
 
@@ -89,8 +112,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
-    [self.timer invalidate];
-    self.timer = nil;
+    [self disableTimer];
 }
 
 -(void)refreshCurrentTrackInfo
@@ -99,20 +121,41 @@
     _artistLabel.text = song.artist;
     _titleLabel.text = song.title;
     
-    [_progressView setProgress:[_player getCurrentSongProgress]];
+    _songProgress.value = [_player getCurrentSongProgress];
+    //[self setInitalProgressText];
     
     if (self.timer) {
-        [self.timer invalidate];
-        self.timer = nil;
+        [self disableTimer];
     }
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateProgressBar) userInfo:nil repeats:YES];
-        
+    [self enableTimer];
+    
     [_playPauseBtn setIcon:([_player playing] ? FAWEIconPause : FAWEIconPlay)];
 }
 
--(void)updateProgressBar
+-(void)setInitalProgressText
 {
-    [_progressView setProgress:[_player getCurrentSongProgress]];
+    Song *song = [_player getCurrentTrack];
+    double duration = [song.duration doubleValue];
+    int min = floor(duration / 60.0);
+    int sec = (int)duration % 60;
+    _songProgressLabel.text = [NSString stringWithFormat:(sec < 10 ? @"[ 0:00 / %d:0%d ]" : @"[ 0:00 / %d:%d ]"), min, sec];
+}
+
+-(void)updateProgress
+{
+    _songProgress.value = [_player getCurrentSongProgress];
+    _songProgressLabel.text = [_player getCurrentSongProgressText];
+}
+
+-(void)enableTimer
+{
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateProgress) userInfo:nil repeats:YES];
+}
+
+-(void)disableTimer
+{
+    [self.timer invalidate];
+    self.timer = nil;
 }
 
 #pragma mark - Table view data source
@@ -145,13 +188,6 @@
     return cell;
 }
 
-#pragma mark - Table view delegate
-
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    
-}
-
 #pragma mark - Controls
 
 - (IBAction)btnRewindTapped:(UIButton *)sender
@@ -165,6 +201,7 @@
 - (IBAction)btnPlayPauseTapped:(UIButton *)sender
 {
     [_player playPause];
+    [self updateTable];
     [_playPauseBtn setIcon:([_player playing] ? FAWEIconPause : FAWEIconPlay)];
 }
 
@@ -198,7 +235,15 @@
 
     [_player togglePlayingAtIndex:(int)cell.tag];
     [self refreshCurrentTrackInfo];
-    [self loadArtistInfo];
+    
+    if (cell.tag != _player.index) {
+        if ([self isShowingArtistInfo]) {
+            [self loadArtistInfo];
+        }
+        else {
+            [self loadLyrics];
+        }
+    }
     
     [self updateTable];
 }
@@ -228,8 +273,9 @@
     _artistNameLabel.hidden = YES;
     _artistTagsLabel.hidden = YES;
     _artistSumaryTextView.hidden = YES;
-    _artistListenersLabel.hidden = YES;
+    _artistPlaycountLabel.hidden = YES;
     _artistPortraitView.hidden = YES;
+    _artistListenersLabel.hidden = YES;
     [_lastFmProgressIndicator startAnimating];
 }
 
@@ -238,58 +284,84 @@
     _artistNameLabel.hidden = NO;
     _artistTagsLabel.hidden = NO;
     _artistSumaryTextView.hidden = NO;
-    _artistListenersLabel.hidden = NO;
+    _artistPlaycountLabel.hidden = NO;
     _artistPortraitView.hidden = NO;
+    _artistListenersLabel.hidden = NO;
     [_lastFmProgressIndicator stopAnimating];
+}
+
+-(void)selectButton:(UIButton *)button {
+    [self.artistInfoBtn setIconColor:[VMEConsts defaultGrayColor]];
+    [self.lyricsBtn setIconColor:[VMEConsts defaultGrayColor]];
+
+    [button setIconColor:[VMEConsts defaultBlueColor]];
 }
 
 -(void)loadArtistInfo
 {
+    [self selectButton:self.artistInfoBtn];
     [self hideArtistInfo];
     
-    LastFm *lastFm = [LastFm sharedInstance];
     Song *song = [_player getCurrentTrack];
     if (!song) {
         return;
     }
-    
-    [lastFm getInfoForArtist:song.artist successHandler:^(NSDictionary *result)
-    {
-        [self showArtistInfo];
-        
-        _artistNameLabel.text = result[@"name"];
-        _artistListenersLabel.text = [NSString stringWithFormat:@"%@ %@", result[@"playcount"], NSLocalizedString(@"PLAYCOUNT", nil)];
-        
-        NSString *tags = @"";
-        BOOL isFirstTag = YES;
-        for (NSString *tag in result[@"tags"])
-        {
-            if (isFirstTag) {
-                tags = [tags stringByAppendingString:tag];
-                isFirstTag = NO;
-            }
-            else {
-                tags = [tags stringByAppendingString:[NSString stringWithFormat:@",  %@", tag]];
-            }
-        }
-        _artistTagsLabel.text = tags;
-        
-        _artistPortraitView.contentMode = UIViewContentModeScaleAspectFit;
-        [_artistPortraitView sd_setImageWithURL:result[@"image"]];
-        
-        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[result[@"summary"] dataUsingEncoding:NSUnicodeStringEncoding]
-                                                                                              options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType }
-                                                                                   documentAttributes:nil
-                                                                                                error:nil];
-        
-        _artistSumaryTextView.attributedText = attributedString;
-        
-    } failureHandler:^(NSError *error) {
-        NSLog(@"%@", [error localizedDescription]);
-    }];
+    [self tryGetInfoForArtist:song.artist];
+}
+
+-(void)tryGetInfoForArtist:(NSString *)artist
+{
+    __block BOOL success = NO;
+    [[LastFm sharedInstance] getInfoForArtist:artist successHandler:^(NSDictionary *result)
+     {
+         success = YES;
+         [self showArtistInfo];
+         
+         NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+         formatter.numberStyle = NSNumberFormatterDecimalStyle;
+         
+         _artistNameLabel.text = result[@"name"];
+         
+         NSNumber *n = [NSNumber numberWithInt:[result[@"playcount"] intValue]];
+         _artistPlaycountLabel.text = [NSString stringWithFormat:@"%@ %@", [formatter stringFromNumber:n], NSLocalizedString(@"PLAYCOUNT", nil)];
+         
+         n = [NSNumber numberWithInt:[result[@"listeners"] intValue]];
+         _artistListenersLabel.text = [NSString stringWithFormat:@"%@ %@", [formatter stringFromNumber:n], NSLocalizedString(@"LISTENERS", nil)];
+         
+         NSString *tags = @"";
+         BOOL isFirstTag = YES;
+         for (NSString *tag in result[@"tags"])
+         {
+             if (isFirstTag) {
+                 tags = [tags stringByAppendingString:tag];
+                 isFirstTag = NO;
+             }
+             else {
+                 tags = [tags stringByAppendingString:[NSString stringWithFormat:@",  %@", tag]];
+             }
+         }
+         _artistTagsLabel.text = tags;
+         
+         _artistPortraitView.contentMode = UIViewContentModeScaleAspectFit;
+         [_artistPortraitView sd_setImageWithURL:result[@"image"]];
+         
+         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[result[@"summary"] dataUsingEncoding:NSUnicodeStringEncoding]
+                                                                                               options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType }
+                                                                                    documentAttributes:nil
+                                                                                                 error:nil];
+         
+         _artistSumaryTextView.attributedText = attributedString;
+         
+     } failureHandler:^(NSError *error) {
+         NSLog(@"%@", [error localizedDescription]);
+         if (!success) {
+             [self tryGetInfoForArtist:artist];
+         }
+     }];
 }
 
 -(void)loadLyrics {
+    [self selectButton:self.lyricsBtn];
     [self hideLyrics];
     [_lastFmProgressIndicator startAnimating];
     
@@ -326,6 +398,19 @@
     
     [self refreshCurrentTrackInfo];
     [self updateTable];
+}
+
+#pragma mark - Handling Slider Events
+
+-(void)songProgressTouchEnded
+{
+    [_player seekToPositionInCurrentSong:self.songProgress.value];
+    [self enableTimer];
+}
+
+-(void)songProgressBeganChangingByUser
+{
+    [self disableTimer];
 }
 
 @end

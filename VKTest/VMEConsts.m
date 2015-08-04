@@ -18,4 +18,8 @@
     return [UIColor colorWithRed:255.0/255.0 green:97.0/255.0 blue:89.0/255.0 alpha:1];
 }
 
++(UIColor *)defaultGrayColor {
+    return [UIColor colorWithRed:170.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
+}
+
 @end

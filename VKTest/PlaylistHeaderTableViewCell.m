@@ -11,11 +11,11 @@
 #import "PlaylistHeaderTableViewCell.h"
 
 #import "UIButton+FAWE.h"
+
 #import "VMEConsts.h"
+#import "VMEUtils.h"
 
 @interface PlaylistHeaderTableViewCell ()
-
-@property (weak, nonatomic) IBOutlet UIView *header;
 
 @property (strong, nonatomic) IBOutlet UIImageView *pic;
 @property (weak, nonatomic) IBOutlet UIView *twoPicView;
@@ -30,8 +30,9 @@
 @property (assign, nonatomic) BOOL isShowingPostText;
 @property (weak, nonatomic) IBOutlet UITextView *postTextView;
 
-@end
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *showPostBtnLeft;
 
+@end
 
 @implementation PlaylistHeaderTableViewCell
 
@@ -76,22 +77,16 @@
 
 -(void)setTime:(Playlist *)pl
 {
-    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[pl.date doubleValue]];
-    
-    NSDateFormatter *formatter = [NSDateFormatter new];
-    [formatter setTimeStyle:NSDateFormatterShortStyle];
-    [formatter setDateStyle:NSDateFormatterLongStyle];
-    
-    self.timeLbl.text = [formatter stringFromDate:date];
+    self.timeLbl.text = [VMEUtils dateTimeStringFromDateStamp:[pl.date doubleValue]];
 }
 
 -(void)showPost
 {
+    self.showPostBtnLeft.constant = self.showPostBtnLeft.constant + self.postTextView.bounds.size.width - self.showPostDataBtn.bounds.size.width;
     [UIView animateWithDuration:0.5 animations:^{
-        _showPostDataBtn.center = CGPointMake(
-                _showPostDataBtn.center.x + _postTextView.bounds.size.width - _showPostDataBtn.bounds.size.width,
-                _showPostDataBtn.center.y);
-        }];
+        [self layoutIfNeeded];
+    }];
+    
     [UIView animateWithDuration:0.5 animations:^{
         _postTextView.alpha = 1;
     }];
@@ -99,11 +94,11 @@
 
 -(void)hidePost
 {
+    self.showPostBtnLeft.constant = self.showPostBtnLeft.constant - self.postTextView.bounds.size.width + self.showPostDataBtn.bounds.size.width;
     [UIView animateWithDuration:0.5 animations:^{
-        _showPostDataBtn.center = CGPointMake(
-                _showPostDataBtn.center.x - _postTextView.bounds.size.width + _showPostDataBtn.bounds.size.width,
-                _showPostDataBtn.center.y);
+        [self layoutIfNeeded];
     }];
+    
     [UIView animateWithDuration:0.5 animations:^{
         _postTextView.alpha = 0;
     }];

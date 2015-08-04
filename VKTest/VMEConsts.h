@@ -13,5 +13,6 @@
 
 +(UIColor *)defaultBlueColor;
 +(UIColor *)defaultRedColor;
++(UIColor *)defaultGrayColor;
 
 @end

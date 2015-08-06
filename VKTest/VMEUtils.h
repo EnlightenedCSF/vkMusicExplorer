@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 
 #import "Playlist.h"
+#import "Song.h"
 #import "NSString+FontAwesome.h"
 
 @interface VMEUtils : NSObject
@@ -19,5 +20,9 @@
 
 +(UIImage *)imageWithFAEnum:(FAWEIcon)symbol size:(CGSize)size;
 +(UIImage *)imageWithFAEnum:(FAWEIcon)symbol size:(CGSize)size color:(UIColor *)color;
+
++(void)songLyricsOfArtist:(NSString *)artist title:(NSString *)title completion:(void (^)(NSString *))callback;
+
++(void)updateControlCenterWithSong:(Song *)song elapsedTime:(double)elapsed;
 
 @end

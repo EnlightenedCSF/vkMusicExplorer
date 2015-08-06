@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E94571F488804DFAD04F9462"
+               BlueprintIdentifier = "33F9AC674AC85AB4F23146B1"
                BuildableName = "libKissXML.a"
                BlueprintName = "KissXML"
                ReferencedContainer = "container:Pods.xcodeproj">

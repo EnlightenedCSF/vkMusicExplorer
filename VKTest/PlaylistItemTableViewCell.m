@@ -22,22 +22,20 @@
     [_playPauseBtn setIconSize:32];
 }
 
--(void) fillWithTitle:(NSString *)title duration:(int)duration {
-    [self showDetails];
-    [self setIsPlaying:NO];
-    
-    self.songTitleLabel.text = title;
-
-    [self setDuration:duration];
-}
-
 -(void)fillWithSong:(Song *)song
 {
     [self showDetails];
     [self setIsPlaying:NO];
     
-    _songTitleLabel.text = [NSString stringWithFormat:@"%@ - %@", song.artist, song.title];
-    [_songTitleLabel boldSubstring:song.artist];
+    NSString *s = [NSString stringWithFormat:@"%@ - %@", song.artist, song.title];
+    NSRange range = [s rangeOfString:song.artist];
+    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:s];
+    [attributedText setAttributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:_songTitleLabel.font.pointSize]} range:range];
+    
+    _songTitleLabel.attributedText = attributedText;
+    _songTitleLabel.pauseInterval = 3.5f;
+    _songTitleLabel.scrollSpeed = 50.0f;
+    _songTitleLabel.fadeLength = 10.0f;
     
     [self setDuration:[song.duration intValue]];
 }

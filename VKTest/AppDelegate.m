@@ -12,6 +12,7 @@
 #import "GroupContentViewController.h"
 
 #import "Playlist.h"
+#import "VKMusicPlayer.h"
 
 #import <MagicalRecord.h>
 #import <VKSdk.h>
@@ -90,6 +91,39 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     // Saves changes in the application's managed object context before the application terminates.
+}
+
+-(void)remoteControlReceivedWithEvent:(UIEvent *)event
+{
+    if (event.type == UIEventTypeRemoteControl) {
+        
+        VKMusicPlayer *player = [VKMusicPlayer sharedPlayer];
+        
+        switch (event.subtype) {
+            case UIEventSubtypeRemoteControlPause: {
+                [player pause];
+                break;
+            }
+                
+            case UIEventSubtypeRemoteControlPlay: {
+                [player play];
+                break;
+            }
+                
+            case UIEventSubtypeRemoteControlPreviousTrack: {
+                [player switchTrackToNext];
+                break;
+            }
+                
+            case UIEventSubtypeRemoteControlNextTrack: {
+                [player switchTrackToPrevious];
+                break;
+            }
+                
+            default:
+                break;
+        }
+    }
 }
 
 #pragma mark - VK Delegate

@@ -15,7 +15,10 @@
 #import "VKMusicPlayer.h"
 #import "VMEUtils.h"
 
+#import <LGHelper.h>
+
 #define DEFAULT_ROW_HEIGHT 44
+#define DEFAULT_ROW_HEIGHT_PHONE 36
 #define MAX_PLAYLIST_SIZE 9
 
 @interface PlaylistCollectionViewCell () <VKPlaylistProtocol>
@@ -35,10 +38,10 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0) {
-        CGFloat height = tableView.bounds.size.height - DEFAULT_ROW_HEIGHT * MAX_PLAYLIST_SIZE;
-        return height;
+        CGFloat height = tableView.bounds.size.height - (kDeviceIsPad ? DEFAULT_ROW_HEIGHT : DEFAULT_ROW_HEIGHT_PHONE) * MAX_PLAYLIST_SIZE;
+        return MAX(height, 0);
     }
-    return DEFAULT_ROW_HEIGHT;
+    return (kDeviceIsPad ? DEFAULT_ROW_HEIGHT : DEFAULT_ROW_HEIGHT_PHONE);
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

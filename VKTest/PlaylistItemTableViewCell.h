@@ -7,8 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+//#import <MarqueeLabel.h>
 
 #import "Song.h"
+
+#import <CBAutoScrollLabel.h>
 
 @protocol VKPlaylistProtocol <NSObject>
 
@@ -18,15 +21,14 @@
 
 @interface PlaylistItemTableViewCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet CBAutoScrollLabel *songTitleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *playPauseBtn;
-@property (weak, nonatomic) IBOutlet UILabel *songTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *songDurationLabel;
 
 @property (weak, nonatomic) id<VKPlaylistProtocol> delegate;
 
 @property (assign, nonatomic) BOOL isPlaying;
 
--(void)fillWithTitle:(NSString *)title duration:(int)duration;
 -(void)fillWithSong:(Song *)song;
 
 -(void)hideDetails;

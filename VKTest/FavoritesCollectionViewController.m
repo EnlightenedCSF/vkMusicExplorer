@@ -78,6 +78,10 @@ static NSString * const reuseIdentifier = @"favCell";
     
     cell.delegate = self;
     
+    if (self.isInEditingMode) {
+        [cell toggleEditing];
+    }
+    
     return cell;
 }
 

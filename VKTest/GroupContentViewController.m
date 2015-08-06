@@ -9,7 +9,7 @@
 #import <VKSdk.h>
 #import <VKApi.h>
 #import <MagicalRecord.h>
-#import <ReactiveCocoa.h>
+#import <LGHelper.h>
 
 #import "SourceGroup.h"
 #import "Playlist.h"
@@ -19,22 +19,19 @@
 #import "PlaylistHeaderTableViewCell.h"
 #import "PlaylistItemTableViewCell.h"
 #import "PlaylistCollectionViewCell.h"
-#import "SourceGroupTableViewController.h"
+#import "SourcePublicViewController.h"
 #import "VKPlayerViewController.h"
 #import "VKUserData.h"
+#import "VKJsonParser.h"
 
 #import "UIButton+FAWE.h"
 #import "VMEConsts.h"
 
 
-@interface GroupContentViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UIPopoverControllerDelegate, UITabBarControllerDelegate>
+@interface GroupContentViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UIPopoverControllerDelegate, UITabBarControllerDelegate, VKSourcePublicSelectionDelegate>
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 @property (weak, nonatomic) IBOutlet UIButton *favBtn;
-
-@property (weak, nonatomic) IBOutlet UIButton *prevPostsBtn;
-@property (weak, nonatomic) IBOutlet UIButton *nextPostsBtn;
-
 
 @property (strong, nonatomic) NSMutableArray *playlists; //of Playlist
 
@@ -74,11 +71,6 @@
                                              selector:@selector(onVkSdkShouldPresentViewController:)
                                                  name:@"vkShouldPresentViewController"
                                                object:nil];
-
-    
-    [RACObserve(self, currentOffset) subscribeNext:^(id x) {
-        NSLog(@"Current offset: %@", x);
-    }];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -188,71 +180,8 @@
 }
 
 -(BOOL)parsePlaylist:(NSDictionary *)json andAddTo:(NSMutableArray *)target
-{
-    NSDictionary *item = json[@"items"][0];
-    NSString *text = item[@"text"];
-    NSArray *attachments = item[@"attachments"];
-    if (!attachments) {     //it's a repost
-        NSDictionary *repost = item[@"copy_history"][0];
-        attachments = repost[@"attachments"];
-    }
-    if (!attachments) {
-        return NO;
-    }
-    
-    BOOL wasAtLeastOneSong = NO;
-    BOOL wasAtLeastOnePhoto = NO;
-    BOOL isSecondPhoto = NO;
-    
-    NSString *videoFrameUrl;
-    NSMutableDictionary *temp = [NSMutableDictionary dictionary];
-    temp[@"songs"] = [NSMutableArray array];
-    
-    temp[@"date"] = item[@"date"];
-    
-    int i = 0;
-    for (NSDictionary *attachment in attachments) {
-        if ([attachment[@"type"] isEqualToString:@"photo"])
-        {
-            wasAtLeastOnePhoto = YES;
-            
-            if (isSecondPhoto) {
-                temp[@"secondPhotoUrl"] = attachment[@"photo"][@"photo_604"];
-            }
-            else {
-                temp[@"photoUrl"] = attachment[@"photo"][@"photo_604"];
-                isSecondPhoto = YES;
-            }
-        }
-        else if ([attachment[@"type"] isEqualToString:@"audio"]) {
-            wasAtLeastOneSong = YES;
-            
-            NSDictionary *item = attachment[@"audio"];
-
-            [temp[@"songs"] addObject:@{
-                                        @"artist": item[@"artist"],
-                                        @"title": item[@"title"],
-                                        @"duration": item[@"duration"],
-                                        @"url": item[@"url"],
-                                        @"index": [NSNumber numberWithInt:i++]
-                                       }];
-        }
-        else if ([attachment[@"type"] isEqualToString:@"video"]) {
-            videoFrameUrl = attachment[@"video"][@"photo_800"];
-        }
-    }
-    
-    if (!wasAtLeastOnePhoto) {
-        if (videoFrameUrl == nil) {
-            return NO;
-        }
-        
-        temp[@"photoUrl"] = videoFrameUrl;
-    }
-    
-    if (!wasAtLeastOneSong) {
-        return NO;
-    }
+{    
+    NSMutableDictionary *temp = [VKJsonParser parsePlaylist:json];
     
     if (temp[@"photoUrl"])
     {
@@ -267,11 +196,15 @@
         else {
             Playlist *newPlaylist = [Playlist MR_createEntity];
             
-            newPlaylist.text = text;
             newPlaylist.photoUrl = temp[@"photoUrl"];
+            
+            if ([temp objectForKey:@"text"]) {
+                newPlaylist.text = temp[@"text"];
+            }
             if ([temp objectForKey:@"secondPhotoUrl"]) {
                 newPlaylist.secondPhotoUrl = temp[@"secondPhotoUrl"];
             }
+            
             for (NSDictionary *item in temp[@"songs"]) {
                 Song *song = [Song MR_createEntity];
                 song.artist = item[@"artist"];
@@ -282,6 +215,7 @@
                 
                 [newPlaylist addSongsObject:song];
             }
+            
             newPlaylist.isFavorite = @(NO);
             newPlaylist.date = @([temp[@"date"] longValue]);
             
@@ -358,16 +292,24 @@
     }
 }
 
-#pragma mark - Popover Delegate
+#pragma mark - On Closing Source Public Selection Delegates
 
--(void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
-{
-    if ([popoverController.contentViewController isKindOfClass:[SourceGroupTableViewController class]])
+-(void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
+    if ([popoverController.contentViewController isKindOfClass:[SourcePublicViewController class]])
     {
-        NSString *newDomain = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectedDomain"];
-        if (!(_oldDomain && [_oldDomain isEqualToString:newDomain])) {
-            [self reloadPosts];
-        }
+        [self reloadPostsIfDomainChanged];
+    }
+}
+
+-(void)onDoneBtnTapped {
+    [self reloadPostsIfDomainChanged];
+}
+
+-(void)reloadPostsIfDomainChanged {
+    NSString *newDomain = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectedDomain"];
+    if (!(_oldDomain && [_oldDomain isEqualToString:newDomain])) {
+        self.currentOffset = 0;
+        [self reloadPosts];
     }
 }
 
@@ -377,17 +319,22 @@
 {
     _oldDomain = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectedDomain"];
     
-    SourceGroupTableViewController* content = [[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:@"sourceSelection"];
-    
-    UIPopoverController* aPopover = [[UIPopoverController alloc]
-                                     initWithContentViewController:content];
-    aPopover.delegate = self;
-    
-    self.aPopoverController = aPopover;
-    
     UIButton *btn = (UIButton *)sender;
     
-    [self.aPopoverController presentPopoverFromRect:btn.frame inView:self.view permittedArrowDirections:(UIPopoverArrowDirectionAny) animated:YES];
+    SourcePublicViewController* content = [[UIStoryboard storyboardWithName:@"MainIPad" bundle:nil] instantiateViewControllerWithIdentifier:@"sourceSelection"];
+    
+    if (kDeviceIsPhone) {
+        content.delegate = self;
+        [self presentViewController:content animated:YES completion:nil];
+    }
+    else {
+        UIPopoverController* aPopover = [[UIPopoverController alloc]
+                                     initWithContentViewController:content];
+        aPopover.delegate = self;
+    
+        self.aPopoverController = aPopover;
+        [self.aPopoverController presentPopoverFromRect:btn.frame inView:self.view permittedArrowDirections:(UIPopoverArrowDirectionAny) animated:YES];
+    }
 }
 
 - (IBAction)toggleFavoriteTapped:(UIButton *)sender
@@ -426,7 +373,6 @@
 
 -(void)viewDidLayoutSubviews
 {
-    NSLog(@"Did rotate");
     [super viewDidLayoutSubviews];
     
     [self.view layoutIfNeeded];

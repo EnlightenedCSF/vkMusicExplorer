@@ -10,6 +10,7 @@
 #import "GroupSelectionTableViewCell.h"
 #import "GroupContentViewController.h"
 #import "VKUserData.h"
+#import "VKJsonParser.h"
 
 #import "SourceGroup.h"
 #import "Playlist.h"
@@ -95,21 +96,24 @@
 
 -(void)parseGroups:(id)json
 {
-    NSMutableArray *res = [NSMutableArray array];
-    for (id item_ in json[@"items"]) {
-        if ([item_ objectForKey:@"screen_name"]) {
-            
-            [res addObject:[NSMutableDictionary dictionaryWithDictionary:
-                            @{ @"icon": item_[@"photo_50"],
-                               @"name": ([item_ objectForKey:@"name"] ?
-                                         item_[@"name"] :
-                                         [NSString stringWithFormat:@"%@ %@", item_[@"first_name"], item_[@"second_name"]]
-                                         ),
-                               @"domain": item_[@"screen_name"],
-                               @"selected": @(NO) }]];
-        }
-    }
-    self.groups = [res copy];
+    
+//    NSMutableArray *res = [NSMutableArray array];
+//    for (id item_ in json[@"items"]) {
+//        if ([item_ objectForKey:@"screen_name"]) {
+//            
+//            [res addObject:[NSMutableDictionary dictionaryWithDictionary:
+//                            @{ @"icon": item_[@"photo_50"],
+//                               @"name": ([item_ objectForKey:@"name"] ?
+//                                         item_[@"name"] :
+//                                         [NSString stringWithFormat:@"%@ %@", item_[@"first_name"], item_[@"second_name"]]
+//                                         ),
+//                               @"domain": item_[@"screen_name"],
+//                               @"selected": @(NO) }]];
+//        }
+//    }
+//    self.groups = [res copy];
+    
+    self.groups = [[VKJsonParser parsePublics:json] copy];
     [self.tableView reloadData];
 }
 

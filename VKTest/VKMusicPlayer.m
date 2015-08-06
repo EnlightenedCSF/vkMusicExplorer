@@ -8,6 +8,9 @@
 #import <STKAudioPlayer.h>
 
 #import "VKMusicPlayer.h"
+#import "VMEUtils.h"
+
+@import AVFoundation;
 
 @interface VKMusicPlayer () <STKAudioPlayerDelegate>
 
@@ -39,7 +42,19 @@
         self.index = -1;
         self.isReloading = NO;
     }
+    
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+    
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    NSError *setCategoryError = nil;
+    [audioSession setCategory:AVAudioSessionCategoryPlayback error:&setCategoryError];
+
     return self;
+}
+
+-(void)dealloc
+{
+    [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
 }
 
 -(void)getDataFromPlaylist:(Playlist *)playlist
@@ -117,6 +132,20 @@
     [self playCurrentSong];
 }
 
+-(void)pause
+{
+    if (_player.state == STKAudioPlayerStatePlaying) {
+        [_player pause];
+    }
+}
+
+-(void)play
+{
+    if (_player.state == STKAudioPlayerStatePaused) {
+        [_player resume];
+    }
+}
+
 -(void)playPause
 {
     switch (_player.state) {
@@ -142,6 +171,7 @@
         _index = index;
         Song *s = _playlist[_index];
         [_player playURL: [NSURL URLWithString:s.url]];
+        [VMEUtils updateControlCenterWithSong:[self getCurrentTrack] elapsedTime:_player.progress];
         if (_isReloading) {
             _isReloading = NO;
         }
@@ -197,6 +227,7 @@
 {
     Song *s = [self getCurrentTrack];
     [_player playURL:[NSURL URLWithString:s.url]];
+    [VMEUtils updateControlCenterWithSong:[self getCurrentTrack] elapsedTime:_player.progress];
 }
 
 -(void)seekToPositionInCurrentSong:(float)position
@@ -269,6 +300,5 @@
             break;
     }
 }
-
 
 @end

@@ -17,10 +17,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[MusiXmatchService performQuery:]:MusiXmatchService.m">
+         contextName = "-[GroupContentViewController savePlaylists]:GroupContentViewController.m">
          <PersistentStrings>
             <PersistentString
-               value = "responce.statuCode">
+               value = "self.playlists">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -61,6 +61,17 @@
          <PersistentStrings>
             <PersistentString
                value = "self.playlists[0].artist">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[PlaylistCollectionViewCell tableView:heightForRowAtIndexPath:]:PlaylistCollectionViewCell.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "indexPath.row">
+            </PersistentString>
+            <PersistentString
+               value = "tableView">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -116,10 +127,10 @@
          contextName = "-[PlaylistHeaderTableViewCell fill:]:PlaylistHeaderTableViewCell.m">
          <PersistentStrings>
             <PersistentString
-               value = "self.headerView">
+               value = "_postTextView.frame">
             </PersistentString>
             <PersistentString
-               value = "_postTextView.frame">
+               value = "self.headerView">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -195,10 +206,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[GroupContentViewController savePlaylists]:GroupContentViewController.m">
+         contextName = "-[MusiXmatchService performQuery:]:MusiXmatchService.m">
          <PersistentStrings>
             <PersistentString
-               value = "self.playlists">
+               value = "responce.statuCode">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

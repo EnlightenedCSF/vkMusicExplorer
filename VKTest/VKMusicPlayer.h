@@ -36,6 +36,10 @@
 -(BOOL)isSongIsPlayingAtIndex:(NSInteger)index;
 
 -(void)startPlayingFromBeginning;
+
+-(void)pause;
+-(void)play;
+
 -(void)playPause;
 -(void)togglePlayingAtIndex:(int)index;
 

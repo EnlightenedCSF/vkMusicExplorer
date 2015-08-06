@@ -14,10 +14,7 @@
 
 #import "VKMusicPlayer.h"
 #import "VMEConsts.h"
-
-#import "MusiXmatchService.h"
-#import "Track.h"
-#import "Artist.h"
+#import "VMEUtils.h"
 
 #import "UIButton+FAWE.h"
 #import <OBSlider.h>
@@ -40,6 +37,7 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *artistInfoBtn;
 @property (weak, nonatomic) IBOutlet UIButton *lyricsBtn;
+@property (assign, nonatomic) BOOL isShowingArtistInfo;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
@@ -95,6 +93,8 @@
     [_songProgress addTarget:self action:@selector(songProgressBeganChangingByUser) forControlEvents:(UIControlEventTouchDown)];
     
     [_songProgress addTarget:self action:@selector(songProgressTouchEnded) forControlEvents:(UIControlEventTouchUpInside | UIControlEventTouchUpOutside)];
+    
+    _isShowingArtistInfo = YES;
 }
 
 
@@ -105,7 +105,14 @@
     [self.tableView reloadData];
     [self refreshCurrentTrackInfo];
     
-    [self loadArtistInfo];
+    if ([self isShowingArtistInfo]) {
+        [self selectButton:self.artistInfoBtn];
+        [self loadArtistInfo];
+    }
+    else {
+        [self selectButton:self.lyricsBtn];
+        [self loadLyrics];
+    }
     
     _player.delegate = self;
 }
@@ -122,7 +129,6 @@
     _titleLabel.text = song.title;
     
     _songProgress.value = [_player getCurrentSongProgress];
-    //[self setInitalProgressText];
     
     if (self.timer) {
         [self disableTimer];
@@ -299,6 +305,8 @@
 
 -(void)loadArtistInfo
 {
+    _isShowingArtistInfo = YES;
+    
     [self selectButton:self.artistInfoBtn];
     [self hideArtistInfo];
     
@@ -361,6 +369,8 @@
 }
 
 -(void)loadLyrics {
+    _isShowingArtistInfo = NO;
+    
     [self selectButton:self.lyricsBtn];
     [self hideLyrics];
     [_lastFmProgressIndicator startAnimating];
@@ -369,22 +379,29 @@
     if (!song) {
         return;
     }
-    
-    MusiXmatchService *service = [MusiXmatchService sharedInstance];
-    Track *track = [service trackSearch:song.artist track:song.title];
-    
-    [self showLyrics];
-    [_lastFmProgressIndicator stopAnimating];
-    
-    NSString *lyrics = [service getLyricsOfArtist:track.artist.name track:track.name];
-    _songLyrics.text = lyrics != nil ? lyrics : NSLocalizedString(@"CANT FIND LYRICS", nil);
+    [self performSelectorInBackground:@selector(getSongLyrics:) withObject:song];
+}
+
+-(void)getSongLyrics:(Song *)song
+{
+    __weak typeof(self) weakSelf = self;
+    [VMEUtils songLyricsOfArtist:song.artist title:song.title completion:^(NSString *result) {
+        
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[result dataUsingEncoding:NSUnicodeStringEncoding]
+                                                                                              options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType }
+                                                                                   documentAttributes:nil
+                                                                                                error:nil];
+        [weakSelf showLyrics];
+        weakSelf.songLyrics.attributedText = attributedString;
+        [weakSelf.lastFmProgressIndicator stopAnimating];
+    }];
 }
 
 #pragma mark - VKMusicPlayer Protocol
 
 -(BOOL)isShowingArtistInfo
 {
-    return _songLyrics.hidden;
+    return _isShowingArtistInfo;
 }
 
 -(void)needToSwitchToNextSong
@@ -411,6 +428,17 @@
 -(void)songProgressBeganChangingByUser
 {
     [self disableTimer];
+}
+
+#pragma mark - Rotation Support
+
+-(void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    
+    [self.view layoutIfNeeded];
+    [self.view layoutSubviews];
+    [self.tableView reloadData];
 }
 
 @end
